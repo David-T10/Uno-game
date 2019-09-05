@@ -1,0 +1,3 @@
+pygame.quit() has to added at the end to let the user quit the program
+pygame.display.update() whenever you add any display changes, e.g changing colours etc
+When adding text in pygame you have to define the font first, create a text surface for the text (render) etc.
