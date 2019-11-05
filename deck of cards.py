@@ -91,7 +91,37 @@ class Player:
       elif discard_card[1] == '+2':
           discard_card[1] = 12
           number = int(discard_card[1])
-          discard_card = Card
+          discard_card = Card(suit , number)
+      elif discard_card[1] == '9':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '8':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '7':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '6':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '5':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '4':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '3':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '2':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '1':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
+      elif discard_card[1] == '0':
+        number = int(discard_card[1])
+        discard_card = Card(suit, number)
           
       if discard_card in self.hand:
         self.hand.remove(discard_card)
@@ -99,12 +129,12 @@ class Player:
         
 
 deck = Deck()
-#deck.shuffle()
+deck.shuffle()
 Player1 = Player('David')
-#Player1.draw(deck, 5)
-#Player1.showhand()
-#Player1.discard()
-#Player1.showhand()
-#Player1.showpile()
+Player1.draw(deck, 5)
+Player1.showhand()
+Player1.discard()
+Player1.showhand()
+Player1.showpile()
 
 
