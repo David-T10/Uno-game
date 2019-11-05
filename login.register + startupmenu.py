@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import messagebox as ms
-from start_up_menu import *
+from UNO GUI import *
 import sqlite3
 import pygame
 
