@@ -94,18 +94,18 @@ class Player:
           displayimage(card.image,div_iwidth,div_iheight-h)
           pygame.display.update()
           h=h+25
-      if len(self.hand) == 1:
-         global UNO_called
-         while UNO_called == False:
-            gamtext_display("Press U to call UNO", 2,4,15)
-            print("call uno thing")
-            #pygame.display.update()
-            if UNO_called == True:
-                gametext_display("UNO CALLED", 2,5, 15)
-                break
-         pygame.display.update()
+      #if len(self.hand) == 1:
+      #   global UNO_called
+      #   while UNO_called == False:
+      #      gamtext_display("Press U to call UNO", 2,4,15)
+       #     print("call uno thing")
+       #     #pygame.display.update()
+       #     if UNO_called == True:
+       #         gametext_display("UNO CALLED", 2,5, 15)
+       #         break
+       #  pygame.display.update()   UNO CALLED FUNCTION NOT WORKING, WILL FIX
         
-      elif len(self.hand) == 0:
+      if len(self.hand) == 0:
         Player1wins = True
         add_screen()
         gametext_display("Player1 won. Game Over", 2, 2, 40)
@@ -181,7 +181,7 @@ class AI(Player):
         print("{}'s Hand is: ".format(self.name))
         h=30
         for card in self.hand:
-            #print(card)
+            print(card)
             displayimage(deckImg,div_iwidth-600,div_iheight-h)
             pygame.display.update()
             h=h+25
@@ -392,9 +392,9 @@ def singleplayer():
                 Player1.draw(deck, 1)
                 Player1.showhand()
                 gametext_display("You've drawn a card from the pile",2,5,15)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
+            '''elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 global Uno_called
-                UNO_called = True
+                UNO_called = True'''
         gametext_display('Player1', 12, 12, 15)
         gametext_display('Computer', 1.2, 12, 15)
         back_button = createbutton('BACK',300,500,200,40,white, orange,startup_menu)
@@ -475,6 +475,9 @@ class Unologin:
             self.head['text'] = self.username.get() + '\n Logged In'
             self.head['pady'] = 100
             self.head['padx'] = 100
+            global login
+            login = True
+            uno_gui()
         else:
             ms.showerror('Username Not Found.')
             
