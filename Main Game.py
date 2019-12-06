@@ -37,14 +37,6 @@ class Card:
                 self.number = str(number)
             else:
                 self.number = vals[number]
-               #if self.number == "reverse":
-                #    reverseturn()
-               # elif self.number == "skip":
-                #    skipturn()
-               # elif self.number == "+2":
-                #    plus2()'''
-        #else:
-            #self.number = number
         self.image = pygame.image.load(str(self) + ".png")
 
     def __eq__(self, other):
@@ -102,19 +94,18 @@ class Player:
           displayimage(card.image,div_iwidth,div_iheight-h)
           pygame.display.update()
           h=h+25
-      '''if len(self.hand) == 1:
-        uno_called = False
-        gametext_display("Press enter to Call UNO", 2, 5, 15)
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    print("uno called")
-                    gametext_display("UNO called",2, 5, 15)
-                    pygame.display.update()
-                    uno_called = True'''
+      if len(self.hand) == 1:
+         global UNO_called
+         while UNO_called == False:
+            gamtext_display("Press U to call UNO", 2,4,15)
+            print("call uno thing")
+            #pygame.display.update()
+            if UNO_called == True:
+                gametext_display("UNO CALLED", 2,5, 15)
+                break
+         pygame.display.update()
         
-      if len(self.hand) == 0:
+      elif len(self.hand) == 0:
         Player1wins = True
         add_screen()
         gametext_display("Player1 won. Game Over", 2, 2, 40)
@@ -145,6 +136,7 @@ class Player:
             reverseturn = True
             gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
             pygame.display.update()
+        
 
     def throwAway(self, discard):
        for card in self.hand:
@@ -227,29 +219,13 @@ def gametext_display(text,divby_x,divby_y,fontsize):
 
 def deal_deck_selected():
         deck.shuffle()
-        Player1.draw(deck, 10)
+        Player1.draw(deck, 3)
         Player1.showhand()
-        Computer.draw(deck, 10)
+        Computer.draw(deck, 3)
         Computer.showhand()
         gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)
         
-
-'''def check_if_uno_called():
-    uno_called = False
-    while uno_called == False:
-        gametext_display('Press U to call UNO, you have 5 seconds', 2, 2, 15)
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_u:
-                    uno_called = True
-                    break
-    else:
-        gametext_display('UNO not called, game end', 2, 1.6, 15)
-        time.sleep(5)
-        pygame.quit()
-        exit()'''
-                    
-                
+                               
 def display_last_discarded():
     lastcardplaced = maingamepile[-1]
     displayimage(lastcardplaced.image, div_iwidth-300, div_iheight-150)
@@ -414,7 +390,11 @@ def singleplayer():
                 time.sleep(4)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 Player1.draw(deck, 1)
+                Player1.showhand()
                 gametext_display("You've drawn a card from the pile",2,5,15)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
+                global Uno_called
+                UNO_called = True
         gametext_display('Player1', 12, 12, 15)
         gametext_display('Computer', 1.2, 12, 15)
         back_button = createbutton('BACK',300,500,200,40,white, orange,startup_menu)
@@ -459,7 +439,6 @@ def uno_gui():
     else:
         print("User not logged in")
 
-
 # make database and users (if not exists already) table at programme start up
 with sqlite3.connect('quit.db') as db:
     c = db.cursor()
@@ -468,7 +447,7 @@ c.execute('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, userna
 db.commit()
 db.close()
 
-#login class for uno
+#login class for uno project
 class Unologin:
     def __init__(self,master):
     	# Window 
@@ -484,7 +463,7 @@ class Unologin:
     #Login Function
     def login(self):
     	#Establish Connection
-        with sqlite3.connect('quit.db') as db:
+        with sqlite3.connect('uno_user_database.db') as db:
             c = db.cursor()
 
         #Find user If there is any take proper action
@@ -496,7 +475,6 @@ class Unologin:
             self.head['text'] = self.username.get() + '\n Logged In'
             self.head['pady'] = 100
             self.head['padx'] = 100
-            uno_gui()
         else:
             ms.showerror('Username Not Found.')
             
@@ -561,7 +539,6 @@ root = Tk()
 root.title("Login Form")
 Unologin(root)
 root.mainloop()
-
 
 
 
