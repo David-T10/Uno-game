@@ -440,14 +440,14 @@ def uno_gui():
         print("User not logged in")
 
 # make database and users (if not exists already) table at programme start up
-with sqlite3.connect('quit.db') as db:
+with sqlite3.connect('uno_user_database.db') as db:
     c = db.cursor()
 
 c.execute('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, username TEXT NOT NULL ,password TEX NOT NULL);')
 db.commit()
 db.close()
 
-#login class for uno project
+#login class for uno
 class Unologin:
     def __init__(self,master):
     	# Window 
@@ -463,7 +463,7 @@ class Unologin:
     #Login Function
     def login(self):
     	#Establish Connection
-        with sqlite3.connect('quit.db') as db:
+        with sqlite3.connect('uno_user_database.db') as db:
             c = db.cursor()
 
         #Find user If there is any take proper action
@@ -475,13 +475,12 @@ class Unologin:
             self.head['text'] = self.username.get() + '\n Logged In'
             self.head['pady'] = 100
             self.head['padx'] = 100
-            uno_gui()
         else:
             ms.showerror('Username Not Found.')
             
     def new_user(self):
     	#Establish Connection
-        with sqlite3.connect('quit.db') as db:
+        with sqlite3.connect('uno_user_database.db') as db:
             c = db.cursor()
 
         #Find Existing username if any take proper action
@@ -540,6 +539,7 @@ root = Tk()
 root.title("Login Form")
 Unologin(root)
 root.mainloop()
+
 
 
 
