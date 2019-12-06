@@ -463,7 +463,7 @@ class Unologin:
     #Login Function
     def login(self):
     	#Establish Connection
-        with sqlite3.connect('uno_user_database.db') as db:
+        with sqlite3.connect('quit.db') as db:
             c = db.cursor()
 
         #Find user If there is any take proper action
@@ -475,6 +475,7 @@ class Unologin:
             self.head['text'] = self.username.get() + '\n Logged In'
             self.head['pady'] = 100
             self.head['padx'] = 100
+            uno_gui()
         else:
             ms.showerror('Username Not Found.')
             
