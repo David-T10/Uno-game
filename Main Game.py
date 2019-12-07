@@ -219,9 +219,9 @@ def gametext_display(text,divby_x,divby_y,fontsize):
 
 def deal_deck_selected():
         deck.shuffle()
-        Player1.draw(deck, 3)
+        Player1.draw(deck, 6)  #determines how many cards will be dealt to the player
         Player1.showhand()
-        Computer.draw(deck, 3)
+        Computer.draw(deck, 6) #determines how many cards will be dealt to the computer
         Computer.showhand()
         gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)
         
