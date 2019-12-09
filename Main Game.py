@@ -127,8 +127,6 @@ class Player:
         self.throwAway(discard_card)
         
        
-        
-
     def throwAway(self, discard):
        global maingamepile
        if len(maingamepile) > 1:
@@ -153,6 +151,8 @@ class Player:
                     break
                 else:
                     print("got no cards")
+                    gametext_display("Invalid move. 1 card added to hand.",2,5,15)
+                    pygame.display.update()
                     Player1.draw(deck, 1)
                     break
        else:
@@ -243,10 +243,11 @@ def gametext_display(text,divby_x,divby_y,fontsize):
     uno_window.blit(TextSurf, TextRect)
 
 def deal_deck_selected():
+        numofcards = int(input("how many cards to you want dealt to each player: "))
         deck.shuffle()
-        Player1.draw(deck, 3)
+        Player1.draw(deck, numofcards)
         Player1.showhand()
-        Computer.draw(deck, 3)
+        Computer.draw(deck, numofcards)
         Computer.showhand()
         gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)
         
