@@ -90,7 +90,7 @@ class Player:
       print("{} Hand is: ".format(self.name))
       h=30
       for card in self.hand:
-          #print(card)
+          print(card)
           displayimage(card.image,div_iwidth,div_iheight-h)
           pygame.display.update()
           h=h+25
@@ -150,7 +150,7 @@ class Player:
                     maingamepile.append(card)
                     break
                 else:
-                    print("got no cards")
+                    invalidturn = True
                     gametext_display("Invalid move. 1 card added to hand.",2,5,15)
                     pygame.display.update()
                     Player1.draw(deck, 1)
@@ -187,7 +187,6 @@ class AI(Player):
                 break
             else:
                 gametext_display("Computer draws a card", 2, 5, 15)
-                print("oop")
                 Computer.draw(deck, 1)
                 break
             break
@@ -262,6 +261,7 @@ def display_last_discarded():
 def discard_card_selected():
     global skipturn
     global reverseturn
+    global invalidturn
     if Player1wins == False and Computerwins == False and skipturn == False and reverseturn == False:
         Player1.discard()
         Computer.discard()
@@ -276,7 +276,9 @@ def discard_card_selected():
     elif reverseturn == True:
         Player1.discard()
         reverseturn = False
-    
+    elif invalidturn == True:
+        Player1.discard()
+        Computer.discard()
     
 
 def deck_image(width,height):
