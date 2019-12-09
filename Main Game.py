@@ -14,7 +14,7 @@ skipturn = False
 reverseturn = False
 Player1wins = False
 Computerwins = False
-global down
+Score = 0
 x = 800
 y = 600
 div_iwidth = 750
@@ -109,6 +109,7 @@ class Player:
         Player1wins = True
         add_screen()
         gametext_display("Player1 won. Game Over", 2, 2, 40)
+        gametext_display("Score: +100 ", 2,4,40)
         pygame.mixer.music.load("winnermusic.mp3")
         pygame.mixer.music.play(-1)
         pygame.display.update()
@@ -119,44 +120,58 @@ class Player:
 
     def discard(self):
       global down
+      global skipturn
+      global reverseturn
       if len(self.hand) != 0:
         discard_card = self.hand[down]
         self.throwAway(discard_card)
-        if discard_card.number == "+2":
-            gametext_display("Computer Draws 2 more cards", 2, 4,15)
-            pygame.display.update()
-            Computer.draw(deck, 2)
-        elif discard_card.number == "skip":
-            global skipturn
-            skipturn = True
-            gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
-            pygame.display.update()
-        elif discard_card.number == "reverse":
-            global reverseturn
-            reverseturn = True
-            gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
-            pygame.display.update()
+        
+       
         
 
     def throwAway(self, discard):
-       for card in self.hand:
-          if card == discard:
-              self.hand.remove(card)
-              maingamepile.append(card)
-              
-              
+       global maingamepile
+       if len(maingamepile) > 1:
+        lastcardplaced = maingamepile[-1]
+        for card in self.hand:
+            if card == discard: 
+                if card.number == lastcardplaced.number or card.suit == lastcardplaced.suit:
+                    if card.number == "+2":
+                        gametext_display("Computer Draws 2 more cards", 2, 4,15)
+                        pygame.display.update()
+                        Computer.draw(deck, 2)
+                    elif card.number == "skip":
+                        skipturn = True
+                        gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
+                        pygame.display.update()
+                    elif card.number == "reverse":
+                        reverseturn = True
+                        gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
+                        pygame.display.update()
+                    self.hand.remove(card)
+                    maingamepile.append(card)
+                    break
+                else:
+                    print("got no cards")
+                    Player1.draw(deck, 1)
+                    break
+       else:
+        for card in self.hand:
+           if card == discard:
+            self.hand.remove(card)
+            maingamepile.append(card)
+            
 
-              
-              
               
 class AI(Player):
     def discard(self):
+        global maingamepile
         lastcardplaced = maingamepile[-1]
         for i in range (len(self.hand)):
             ai_card = self.hand[i]
             if ai_card.suit == lastcardplaced.suit or ai_card.number == lastcardplaced.number: #checks if card the computer wants to discard is the same suit or number as the card the player first discarded
                 print("computer discarded", ai_card)
-                self.throwAway(ai_card)
+                self.aithrowAway(ai_card)
                 if ai_card.number == "+2":
                     gametext_display("Player1 Draws 2 more cards", 2, 5,15)
                     pygame.display.update()
@@ -172,9 +187,18 @@ class AI(Player):
                 break
             else:
                 gametext_display("Computer draws a card", 2, 5, 15)
+                print("oop")
                 Computer.draw(deck, 1)
                 break
+            break
         
+    def aithrowAway(self, discard):
+        for card in self.hand:
+            if card == discard:
+              self.hand.remove(card)
+              maingamepile.append(card)
+
+
        
 
     def showhand(self):
@@ -189,6 +213,7 @@ class AI(Player):
             Computerwins = True
             add_screen()
             gametext_display("Computer won. Game Over", 2, 2, 40)
+            gametext_display("Score: +100 ", 2,4,40)
             pygame.display.update()
             time.sleep(5)
             pygame.quit()
@@ -219,14 +244,15 @@ def gametext_display(text,divby_x,divby_y,fontsize):
 
 def deal_deck_selected():
         deck.shuffle()
-        Player1.draw(deck, 6)  #determines how many cards will be dealt to the player
+        Player1.draw(deck, 3)
         Player1.showhand()
-        Computer.draw(deck, 6) #determines how many cards will be dealt to the computer
+        Computer.draw(deck, 3)
         Computer.showhand()
         gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)
         
                                
 def display_last_discarded():
+    global maingamepile
     lastcardplaced = maingamepile[-1]
     displayimage(lastcardplaced.image, div_iwidth-300, div_iheight-150)
     gametext_display("Last placed card is:", 2, 3.5, 15)
@@ -242,7 +268,7 @@ def discard_card_selected():
         Player1.showhand()
         Computer.showhand()
         display_last_discarded()
-        time.sleep(4)
+        time.sleep(2.5)
     elif skipturn == True:
         Player1.discard()
         skipturn = False
@@ -392,6 +418,7 @@ def singleplayer():
                 Player1.draw(deck, 1)
                 Player1.showhand()
                 gametext_display("You've drawn a card from the pile",2,5,15)
+                
             '''elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                 global Uno_called
                 UNO_called = True'''
@@ -443,7 +470,7 @@ def uno_gui():
 with sqlite3.connect('uno_user_database.db') as db:
     c = db.cursor()
 
-c.execute('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, username TEXT NOT NULL ,password TEX NOT NULL);')
+c.execute('CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, username TEXT NOT NULL ,password TEXT NOT NULL, userscore );')
 db.commit()
 db.close()
 
@@ -455,6 +482,7 @@ class Unologin:
         # Some Usefull variables
         self.username = StringVar()
         self.password = StringVar()
+        self.userscore = IntVar()
         self.n_username = StringVar()
         self.n_password = StringVar()
         #Create Widgets
