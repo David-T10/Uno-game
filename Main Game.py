@@ -229,7 +229,7 @@ Computer = AI('Computer')
 
 #GUI + EXTRA FUNCTION STUFF
 
-class maingame:
+class maingame: #class for main game functionality, OOP required for multiplayer purposes
     def __init__(self):
         self.iwidth = iwidth
         self.iheight = iheight
@@ -244,7 +244,8 @@ class maingame:
         self.click = click
         self.button_font_size = button_font_size
         self.down = down
-        
+        #all variables defined in my main game that aren't already globalised
+        #below are the methods used in my game
 
     def displayimage(image_name,div_iwidth, div_iheight): #displaying imaages (UNO cards) on the screen
         maingame.iwidth = x-div_iwidth
