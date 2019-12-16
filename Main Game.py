@@ -6,11 +6,13 @@ from tkinter import *
 from tkinter import messagebox as ms
 import sqlite3
 from sys import exit
+from network_file import Network
 #imported modules necessary for game's function
 
 pygame.mixer.pre_init(44100,16,2,4096) #initialises pygame mixer for music
 pygame.init() #initialises pygame
 
+ClientNumber = 0 #multiplayer client test
 skipturn = False #variable used to check if a skip action card has been played
 reverseturn = False #variable used to check if a skip reverse card has been played
 Player1wins = False  #variable used to check if Player has won
@@ -27,6 +29,10 @@ red = (255,0,0)
 blue = (0,0,255)
 orange = (255,165,0)  #predefined colours
 mouseposition = pygame.mouse.get_pos() #gets mouse position
+
+class Game:
+    def __init__(self):
+        self.shared = Game()
 
 
 class Card: 
