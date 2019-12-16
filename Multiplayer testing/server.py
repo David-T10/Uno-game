@@ -2,8 +2,11 @@ import socket
 from _thread import *
 import sys
 
-server = "192.168.1.72" #ipv4 address here
 port = 5555
+host = socket.gethostname()
+ip = socket.gethostbyname(host)
+server = ip #ipv4 address here
+print(ip)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
