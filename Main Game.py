@@ -6,13 +6,13 @@ from tkinter import *
 from tkinter import messagebox as ms
 import sqlite3
 from sys import exit
-#from network_file import Network
+from network_file import Network
 #imported modules necessary for game's function
 
 pygame.mixer.pre_init(44100,16,2,4096) #initialises pygame mixer for music
 pygame.init() #initialises pygame
 
-#ClientNumber = 0 #multiplayer client test
+ClientNumber = 0 #multiplayer client test
 skipturn = False #variable used to check if a skip action card has been played
 reverseturn = False #variable used to check if a skip reverse card has been played
 Player1wins = False  #variable used to check if Player has won
@@ -221,13 +221,15 @@ class AI(Player):
             pygame.quit()
             os._exit(1) 
             #similar to Player showhand 
-        
+    
 deck = Deck() #initialises deck
 maingamepile = [] #initialises maingamepile
-Player1 = Player('Player1') 
+Player1 = Player('Player1')
 Computer = AI('Computer')
+n = Network()
 
 #GUI + EXTRA FUNCTION STUFF
+    
 
 class maingame: #class for main game functionality, OOP required for multiplayer purposes
     def __init__(self):
@@ -246,7 +248,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         self.down = down
         #all variables defined in my main game that aren't already globalised
         #below are the methods used in my game
-
+        
     def displayimage(image_name,div_iwidth, div_iheight): #displaying imaages (UNO cards) on the screen
         maingame.iwidth = x-div_iwidth
         maingame.iheight = y-div_iheight
@@ -468,6 +470,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                     Player1.draw(deck, 1)
                     Player1.showhand()
                     maingame.gametext_display("You've drawn a card from the pile",2,5,15)
+                    Computer.discard()
                 #checks what number in the list of cards the user has selected to remove, and removes that card from their hand
                 #pressing space draws a card for the user at any point in the game
                 #pressing s displays the last card in play for 4 seconds as a reminder
@@ -480,7 +483,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
             back_button = maingame.createbutton('BACK',300,500,200,40,white, orange,maingame.startup_menu) #back button to main menu
             maingame.width = (x/2.3) #location on screen
             maingame.height = (y/3) #location on screen
-            maingame.deck_image(width,height) #blank UNO CARD image to represent pile
+            maingame.deck_image(maingame.width,maingame.height) #blank UNO CARD image to represent pile
             pygame.display.update()
                 
 
@@ -491,7 +494,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         maingame.gametext_display('Computer', 1.2, 12, 15)
         maingame.width = (x/2.3) #location on screen
         maingame.height = (y/3) #location on screen
-        maingame.deck_image(width,height)
+        maingame.deck_image(maingame.width,maingame.height)
         #blank template for singleplayer screen, used after cards have been discarded to refresh view
 
     def empty_multiplayer_screen():
@@ -500,12 +503,8 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         maingame.gametext_display('Player2', 1.2, 12, 15)
         maingame.width = (x/2.3)
         maingame.height = (y/3)
-        maingame.deck_image(width,height)
-        pygame.display.update()
-
-            
-
-
+        maingame.deck_image(maingame.width,maingame.height)
+        
     def multiplayer():
         maingame.add_screen()
         startup = True
@@ -515,7 +514,6 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                     pygame.quit()
                     quit()
             back_button = maingame.createbutton('BACK',50,450,100,40,white, orange,maingame.startup_menu)
-            #multiplayer_local_button = createbutton('Multiplayer Local',250,450,100,50,blue,orange,multiplayer_local)
             multiplayer_online_button = maingame.createbutton('Multiplayer Online',375,450,250,50,blue,orange,maingame.multiplayer_online)
             pygame.display.update()
 
@@ -526,14 +524,29 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-            maingame.empty_multiplayer_screen()
+            maingame.gametext_display('Player1', 12, 12, 15)
+            maingame.gametext_display('Player2', 1.2, 12, 15)
+            maingame.width = (x/2.3) #location on screen
+            maingame.height = (y/3) #location on screen
+            maingame.deck_image(maingame.width,maingame.height) #blank UNO CARD image to represent pile
+            pygame.display.update()
 
     def uno_gui():
-        if login == True:
-            maingame.startup_menu()
-        else:
-            print("User not logged in")
-        #user must log in to play first
+        maingame.startup_menu()
+
+class multiplayergame(maingame): #class for multiplayer including main game functionality
+    def __init__(self, id):
+        self.player1 = Player('Player1')
+        self.player2 = Player('Player2')
+        self.deck = Deck()
+        self.maingamepile = []
+        self.p1played = False
+        selfp2.played = False
+        self.ready = False
+        self.id = id
+        self.wins = [0,0]
+
+multiplayergame.uno_gui()
 
 # make database and users (if not exists already) table at programme start up
 with sqlite3.connect('uno_user_database.db') as db:
@@ -573,9 +586,9 @@ class Unologin:
             self.head['text'] = self.username.get() + '\n Logged In'
             self.head['pady'] = 100
             self.head['padx'] = 100
-            global login
-            login = True
-            maingame.uno_gui()
+            #global login
+            #login = True
+            #maingame.uno_gui()
         else:
             ms.showerror('Username Not Found.')
             
@@ -635,11 +648,11 @@ class Unologin:
 
     
 
-#create log in window and application object
+'''#create log in window and application object
 root = Tk()
 root.title("Login Form")
 Unologin(root)
-root.mainloop()
+root.mainloop()'''
 
 
 
