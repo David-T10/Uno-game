@@ -1,9 +1,14 @@
 import socket
 from _thread import *
 import sys
+from player import *
+import pickle
 
-server = "192.168.1.72" #ipv4 address here
 port = 5555
+host = socket.gethostname()
+ip = socket.gethostbyname(host)
+server = ip #ipv4 address here
+print(ip)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -15,32 +20,37 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection, Server Started")
 
+game_data = [{'Player':MOplayer('Player1')},{'Player':MOplayer('Player2')}]
 
-def threaded_client(conn):
-    conn.send(str.encode("Connected"))
+
+def threaded_client(conn, player):
+    conn.send(pickle.dumps(game_data[player]))
     reply = ""
     while True:
         try:
-            data = conn.recv(2048)
-            reply = data.decode("utf-8")
-
+            data = pickle.loads(conn.recv(2048))
+            game_data[player] = data
+            
             if not data:
-                print("Disconnected")
+                print("Client Disconnected")
                 break
             else:
-                print("Received: ", reply)
-                print("Sending : ", reply)
-
-            conn.sendall(str.encode(reply))
+                if player == 1:
+                    reply = game_data[0]
+                else:
+                    reply = game_data[1]
+                    
+            conn.sendall(pickle.dumps(reply))
         except:
             break
-
-    print("Lost connection")
+            
+    print("Lost Connection")
     conn.close()
 
-
+totalPlayers = 0
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
-
-    start_new_thread(threaded_client, (conn,))
+    
+    start_new_thread(threaded_client, (conn, totalPlayers))
+    totalPlayers += 1
