@@ -1,14 +1,13 @@
 import socket
 from _thread import *
 import sys
-from player import *
+from player import MOplayer
 import pickle
 
 port = 5555
 host = socket.gethostname()
 ip = socket.gethostbyname(host)
-server = ip #ipv4 address here
-print(ip)
+server = ip
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -20,7 +19,7 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection, Server Started")
 
-game_data = [{'Player':MOplayer('Player1')},{'Player':MOplayer('Player2')}]
+game_data = [MOplayer('Player1'),MOplayer('Player2')]
 
 
 def threaded_client(conn, player):
@@ -28,7 +27,7 @@ def threaded_client(conn, player):
     reply = ""
     while True:
         try:
-            data = pickle.loads(conn.recv(2048))
+            data = pickle.loads(conn.recv(2000))
             game_data[player] = data
             
             if not data:
@@ -54,3 +53,4 @@ while True:
     
     start_new_thread(threaded_client, (conn, totalPlayers))
     totalPlayers += 1
+print("Total players connected", totalPlayers)

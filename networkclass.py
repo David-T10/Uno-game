@@ -10,19 +10,19 @@ class Network:
         self.addr = (self.server, self.port)
         self.pnumber = self.connect()
 
-    def getP(self):
+    def getplayerID(self):
         return self.pnumber
 
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return pickle.loads(self.client.recv(2048))
+            return pickle.loads(self.client.recv(2000))
         except:
             pass
 
     def send(self, data):
         try:
-            self.client.send(str.encode(data))
-            return pickle.loads(self.client.recv(2048*2))
+            self.client.send(pickle.dumps(data))
+            return pickle.loads(self.client.recv(2000))
         except socket.error as e:
             print(e)

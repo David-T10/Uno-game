@@ -146,21 +146,21 @@ class Player:
         for card in self.hand:
             if card == discard: 
                 if card.number == lastcardplaced.number or card.suit == lastcardplaced.suit: #checks if card selected to be discarded has the same suit or number as the last card in play on the pile
-                    if card.number == "+2":
-                        maingame.gametext_display("Computer Draws 2 more cards", 2, 4,15)
-                        pygame.display.update()
-                        Computer.draw(deck, 2) #if card is a +2, computer gets 2 more cards
-                    elif card.number == "skip":
-                        skipturn = True
-                        maingame.gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
-                        pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
-                    elif card.number == "reverse":
-                        reverseturn = True
-                        maingame.gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
-                        pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                     self.hand.remove(card) #card is removed from player's hand
                     maingamepile.append(card) #card is added on to main game pile
                     break
+                elif card.number == "+2":
+                        maingame.gametext_display("Computer Draws 2 more cards", 2, 4,15)
+                        pygame.display.update()
+                        Computer.draw(deck, 2) #if card is a +2, computer gets 2 more cards
+                elif card.number == "skip":
+                        skipturn = True
+                        maingame.gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
+                        pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
+                elif card.number == "reverse":
+                        reverseturn = True
+                        maingame.gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
+                        pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                 else:
                     invalidturn = True  
                     maingame.gametext_display("Invalid move. 1 card added to hand.",2,5,15)
@@ -181,21 +181,21 @@ class Playerone(Player):
         for card in self.hand:
             if card == discard: 
                 if card.number == lastcardplaced.number or card.suit == lastcardplaced.suit: #checks if card selected to be discarded has the same suit or number as the last card in play on the pile
-                    if card.number == "+2":
-                        maingame.gametext_display("Player2 Draws 2 more cards", 2, 4,15)
-                        pygame.display.update()
-                        mPlayer2.draw(deck, 2) #if card is a +2, computer gets 2 more cards
-                    elif card.number == "skip":
-                        p1skipturn = True
-                        maingame.gametext_display("Player2's Turn Will Be Skipped Next Round", 2, 4,15)
-                        pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
-                    elif card.number == "reverse":
-                        p1reverseturn = True
-                        maingame.gametext_display("Player2's Turn Will Be Reversed Next Round", 2,4,15)
-                        pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                     self.hand.remove(card) #card is removed from player's hand
                     maingamepile.append(card) #card is added on to main game pile
                     break
+                elif card.number == "+2":
+                        maingame.gametext_display("Player2 Draws 2 more cards", 2, 4,15)
+                        pygame.display.update()
+                        mPlayer2.draw(deck, 2) #if card is a +2, computer gets 2 more cards
+                elif card.number == "skip":
+                        p1skipturn = True
+                        maingame.gametext_display("Player2's Turn Will Be Skipped Next Round", 2, 4,15)
+                        pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
+                elif card.number == "reverse":
+                        p1reverseturn = True
+                        maingame.gametext_display("Player2's Turn Will Be Reversed Next Round", 2,4,15)
+                        pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                 else:
                     p1invalidturn = True  
                     maingame.gametext_display("Invalid move. 1 card added to hand.",2,5,15)
@@ -245,21 +245,22 @@ class Player2(Player):
         for card in self.hand:
             if card == discard: 
                 if card.number == lastcardplaced.number or card.suit == lastcardplaced.suit: #checks if card selected to be discarded has the same suit or number as the last card in play on the pile
-                    if card.number == "+2":
-                        maingame.gametext_display("Player1 Draws 2 more cards", 2, 4,15)
-                        pygame.display.update()
-                        mPlayer2.draw(deck, 2) #if card is a +2, computer gets 2 more cards
-                    elif card.number == "skip":
-                        p2skipturn = True
-                        maingame.gametext_display("Player1's Turn Will Be Skipped Next Round", 2, 4,15)
-                        pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
-                    elif card.number == "reverse":
-                        p2reverseturn = True
-                        maingame.gametext_display("Player1's Turn Will Be Reversed Next Round", 2,4,15)
-                        pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                     self.hand.remove(card) #card is removed from player's hand
                     maingamepile.append(card) #card is added on to main game pile
                     break
+                elif card.number == "+2":
+                        maingame.gametext_display("Player1 Draws 2 more cards", 2, 4,15)
+                        pygame.display.update()
+                        mPlayer2.draw(deck, 2) #if card is a +2, computer gets 2 more cards
+                elif card.number == "skip":
+                        p2skipturn = True
+                        maingame.gametext_display("Player1's Turn Will Be Skipped Next Round", 2, 4,15)
+                        pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
+                elif card.number == "reverse":
+                        p2reverseturn = True
+                        maingame.gametext_display("Player1's Turn Will Be Reversed Next Round", 2,4,15)
+                        pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
+                    
                 else:
                     invalidturn = True  
                     maingame.gametext_display("Invalid move. 1 card added to hand.",2,5,15)
@@ -305,16 +306,16 @@ class AI(Player):
             if ai_card.suit == lastcardplaced.suit or ai_card.number == lastcardplaced.number: #checks if card the computer wants to discard is the same suit or number as the card the player first discarded
                 print("computer discarded", ai_card)
                 self.aithrowAway(ai_card)
-                if ai_card.number == "+2":
+            elif ai_card.number == "+2":
                     maingame.gametext_display("Player1 Draws 2 more cards", 2, 5,15)
                     pygame.display.update()
                     Player1.draw(deck, 2)
-                elif ai_card.number == "skip":
+            elif ai_card.number == "skip":
                     maingame.gametext_display("Player1's Turn Skipped", 2, 5,15)
                     Computerskip = True
                     pygame.display.update()
                     Computer.discard()
-                elif ai_card.number == "reverse":
+            elif ai_card.number == "reverse":
                     maingame.gametext_display("Player1's Turn Reversed", 2,5,15)
                     Computerreverse = True
                     pygame.display.update()
@@ -640,7 +641,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
     def uno_gui():
         maingame.startup_menu()
 
-class Multiplayeronline(maingame):
+class Multiplayeronline(maingame): #still currently working on
     def __init__(self):
         pass
 
@@ -654,6 +655,7 @@ class Multiplayeronline(maingame):
 
     def MOgameplay():
         Multiplayeronline.main()
+        print("Multiplayer game started")
         maingame.add_screen()
         global multiplayeronline
         global firstplayerobject
@@ -727,22 +729,20 @@ class Multiplayeronline(maingame):
         #once player has no cards in their hand, Player has won, displays win screen and plays winner music
 
     def main(): #ADD USER GAMEPLAY BETWEEN SERVERS AND THEN TEST EVERYTHING
+        run = True
         pygame.mixer.music.load("Menumusic_2.mp3")
         pygame.mixer.music.play(-1)
         host = socket.gethostname()
         ip = socket.gethostbyname(host)
-        run = True
-        try:
-            n = Network(ip)
-            p = get.pnumber()
-            print(p)
-            print(p['Player'])
-            firstplayerobject = p['Player']
-        except:
-            print("Can't connect to server")
+        
+        n = Network(ip)
+        p = n.getplayerID()
+        print(p)
+        firstplayerobject = p
+            
         while run:
             player2 = n.send(p)
-            secondplayerobject = p2['Player']
+            secondplayerobject = player2
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -844,10 +844,12 @@ class multiplayergame(maingame): #class for multiplayer including main game func
                     if multiplayergame.p1turn == True:
                         mPlayer1.draw(deck, 1)
                         multiplayergame.gametext_display("Player1 draw's a card", 2, 5, 15)
+                        pygame.display.update()
                         multiplayergame.empty_multiplayer_screen()
                     elif multiplayergame.p2turn == True:
                         mPlayer2.draw(deck, 1)
                         multiplayergame.gametext_display("Player2 draw's a card",2,5,15)
+                        pygame.display.update()
                         multiplayergame.empty_multiplayer_screen()
                 #checks what number in the list of cards the user has selected to remove, and removes that card from their hand
                 #pressing space draws a card for the user at any point in the game
@@ -870,16 +872,20 @@ class multiplayergame(maingame): #class for multiplayer including main game func
         if start == True:
             if multiplayergame.p1turn == True and multiplayergame.p2turn == False and p1reverseturn == False and p1skipturn == False and p2reverseturn == False and p2skipturn == False:
                 maingame.gametext_display("Player1's turn", 2,5,15)
+                pygame.display.update()
                 mPlayer1.discard()
                 multiplayergame.p1turn = False
                 multiplayergame.p2turn = True
                 maingame.gametext_display("End of Player1's Turn", 2,3,15)
+                pygame.display.update()
                 multiplayergame.empty_multiplayer_screen()
             elif multiplayergame.p2turn == True and multiplayergame.p1turn == False and p1reverseturn == False and p1skipturn == False and p2reverseturn == False and p2skipturn == False:
                 maingame.gametext_display("Player2's turn", 2,5,15)
+                pygame.display.update()
                 mPlayer2.discard()
                 multiplayergame.p1turn = True
                 maingame.gametext_display("End of Player2's Turn", 2,3,15)
+                pygame.display.update()
                 multiplayergame.empty_multiplayer_screen()
             elif multiplayergame.p1turn == True and multiplayergame.p2turn == False and (p1reverseturn == True or p1skipturn == True):
                 mPlayer1.discard()
