@@ -25,7 +25,7 @@ p2reverseturn = False
 p2skipturn = False
 Playerwins = False  #variable used to check if Player has won
 Computerwins = False   #variable used to check if Computer has won
-Player1wins = False #variable used to check if Player1 in multiplayer has won
+Player1wins = False #variable used to chegck if Player1 in multiplayer has won
 Player2wins = False #variable used to check if Player2 in multiplayer has won
 Score = 0 #placeholder for score value for users (yet to be added t table)
 x = 800 #screen resolution width
@@ -356,6 +356,7 @@ class AI(Player):
 
 
     def showhand(self):
+        deckImg = pygame.image.load('deck_image.png')
         print("{}'s Hand is: ".format(self.name))
         h=30
         for card in self.hand:
@@ -389,7 +390,27 @@ mPlayer2.draw(mdeck , 7)
 #initialises players for multiplayer game
 
 #GUI + EXTRA FUNCTION STUFF
+window= Tk()
+def callback():
+    global dealnumber
+    dealnumber = int(einput.get())
     
+    if dealnumber > 9:
+        ms.showerror("Error!", "Invalid Input")
+    else:
+        ms.showinfo("Success", "Please close the deal setting window")
+        return dealnumber
+        
+label= Label(window, text="Deal input box for Singleplayer Only. Please enter an amount (9 or less), click save and then close this window", fg='red', font=("Helvetica", 16))
+label.place(x=60, y=50)
+einput = Entry(window, text="Enter start DEAL amount", bd=20)
+einput.place(x=100, y=150)
+button= Button(window, text="Save", fg='green', command=callback)
+button.place(x=100, y=100)
+window.title('Deal Setting')
+window.geometry("1200x250+10+10")
+window.mainloop()
+window.quit()
 
 class maingame: #class for main game functionality, OOP required for multiplayer purposes
     def __init__(self):
@@ -425,16 +446,13 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         TextRect.center = ((x/divby_x) ,(y/divby_y))
         uno_window.blit(TextSurf, TextRect)
 
-    def deal_deck_selected():
-            numofcards = int(input("How many cards to you want dealt to each player? (max 9): "))
-            deck.shuffle()
-            Player1.draw(deck, numofcards)
-            Player1.showhand()
-            Computer.draw(deck, numofcards)
-            Computer.showhand()
-            maingame.gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)
-            #when the TAB key is pressed my program jumps to this function which deals cards to each Player and displays their hand to the screen
-            
+    def deal_deck(dealnumber):
+        deck.shuffle()
+        Player1.draw(deck, dealnumber)
+        Player1.showhand()
+        Computer.draw(deck, dealnumber)
+        Computer.showhand()
+        maingame.gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)            
                                    
     def display_last_discarded():
         global maingamepile
@@ -533,6 +551,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
             quit_button = maingame.createbutton('QUIT',450,450,100,50,red,orange,maingame.quitgame)
             help_button = maingame.createbutton('HELP', 600,450,100, 50, white, orange,maingame.help_screen)
             pygame.display.update()
+        
 
         #main menu - plays main menu music and displays singleplayer,multiplaer,quit and help button
 
@@ -584,15 +603,14 @@ class maingame: #class for main game functionality, OOP required for multiplayer
     def singleplayer():
         pygame.mixer.music.load("Menumusic_2.mp3")
         pygame.mixer.music.play(-1)
-        maingame.add_screen()
+        maingame.empty_singleplayer_screen()
+        maingame.deal_deck(dealnumber)
         play = True
         while play == True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
-                    maingame.deal_deck_selected()
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
                     maingame.down = 0
                     maingame.discard_card_selected()
@@ -663,7 +681,10 @@ class maingame: #class for main game functionality, OOP required for multiplayer
 
 class Multiplayeronline(maingame): #still currently working on
     def __init__(self):
-        pass
+        self.firstplayerobject = None
+        self.secondplayerobject = None
+        self.multiplayeronline=False
+        self.down = down
 
     def empty_multiplayer_online_screen():
         maingame.add_screen()
@@ -677,13 +698,11 @@ class Multiplayeronline(maingame): #still currently working on
         Multiplayeronline.main()
         print("Multiplayer game started")
         maingame.add_screen()
-        global multiplayeronline
-        global firstplayerobject
-        global secondplayerobject
+        #global multiplayeronline
         multiplayeronline = True
-        firstplayerobject.draw(deck, 5)
-        secondplayerobject.draw(deck, 5)
-        firstplayerobject.showhand()
+        Multiplayeronline.firstplayerobject.draw(deck, 5)
+        Multiplayeronline.secondplayerobject.draw(deck, 5)
+        Multiplayeronline.firstplayerobject.showhand()
         while multiplayeronline ==  True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -731,10 +750,8 @@ class Multiplayeronline(maingame): #still currently working on
             pygame.display.update()
 
     def gamemanager(self):
-        global firstplayerobject
-        global secondplayerobject
-        firstplayerobject.showhand()
-        secondplayerobject.showhand()
+        Multiplayeronline.firstplayerobject.showhand()
+        Multiplayeronline.secondplayerobject.showhand()
 
     def MOwinnerscreen(playerthatwon):
         maingame.add_screen()
@@ -756,23 +773,23 @@ class Multiplayeronline(maingame): #still currently working on
         ip = socket.gethostbyname(host)
         
         n = Network(ip)
-        p = n.getplayerID()
+        p = n.getID()
         print(p)
-        firstplayerobject = p
+        self.firstplayerobject = p
             
         while run:
             player2 = n.send(p)
-            secondplayerobject = player2
+            Multiplayeronlinesecondplayerobject = player2
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
                     pygame.quit()
-            if firstplayerobject.won == True: 
+            if Multiplayeronline.firstplayerobject.won == True: 
                 run = False
-                Multiplayeronline.MOwinnerscreen(firstplayerobject)
-            elif secondplayerobject.won == True:
+                Multiplayeronline.MOwinnerscreen(Multiplayeronline.firstplayerobject)
+            elif Multiplayeronline.secondplayerobject.won == True:
                 run = False
-                Multiplayeronline.MOwinnerscreen(secondplayerobject)
+                Multiplayeronline.MOwinnerscreen(Multiplayeronline.secondplayerobject)
             else:
                 Multiplayeronline.MOgameplay()
             pygame.display.update()
@@ -794,7 +811,7 @@ class multiplayergame(maingame): #class for multiplayer including main game func
                     pygame.quit()
                     quit()
             multiplayer_local_button = maingame.createbutton('Multiplayer Local', 150,450,160,50,blue,orange,multiplayergame.multiplayer_gui)
-            multiplayer_online_button = maingame.createbutton('Multiplayer Online', 450,450,160,50,red,orange,Multiplayeronline.MOgameplay)
+            multiplayer_online_button = maingame.createbutton('Multiplayer Online', 450,450,160,50,red,orange,Multiplayeronline.MOgameplay())
             pygame.display.update()
 
     def empty_multiplayer_screen():
