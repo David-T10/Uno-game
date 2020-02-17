@@ -366,7 +366,7 @@ class AI(Player):
             h=h+25
         if len(self.hand) == 0:
             Computerwins = True
-            add_screen()
+            maingame.add_screen()
             maingame.gametext_display("Computer won. Game Over", 2, 2, 40)
             maingame.gametext_display("Score: +100 ", 2,4,40)
             pygame.display.update()
@@ -395,13 +395,13 @@ def callback():
     global dealnumber
     dealnumber = int(einput.get())
     
-    if dealnumber > 9:
+    if dealnumber > 13:
         ms.showerror("Error!", "Invalid Input")
     else:
         ms.showinfo("Success", "Please close the deal setting window")
         return dealnumber
         
-label= Label(window, text="Deal input box for Singleplayer Only. Please enter an amount (9 or less), click save and then close this window", fg='red', font=("Helvetica", 16))
+label= Label(window, text="Deal input box for Singleplayer Only. Please enter an amount (13 or less), click save and then close this window", fg='red', font=("Helvetica", 16))
 label.place(x=60, y=50)
 einput = Entry(window, text="Enter start DEAL amount", bd=20)
 einput.place(x=100, y=150)
@@ -427,9 +427,12 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         self.click = click
         self.button_font_size = button_font_size
         self.down = down
+        self.frame_count = 0
+        self.frame_rate = 60
+        self.start_time = 180
         #all variables defined in my main game that aren't already globalised
         #below are the methods used in my game
-        
+
     def displayimage(image_name,div_iwidth, div_iheight): #displaying imaages (UNO cards) on the screen
         maingame.iwidth = x-div_iwidth
         maingame.iheight = y-div_iheight
@@ -501,15 +504,12 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         deckImg = pygame.image.load('deck_image.png')
         uno_window.blit(deckImg, (width,height))
         #blank uno card image to visually represent the 'pile'
-
-
+          
     def add_screen():
         global uno_window
         uno_window = pygame.display.set_mode((x, y)) #creates a window with specified resolution (x,y)
         uno_window.fill(white)
         pygame.display.set_caption('Python UNO') #sets window title
-        maingame.fps = pygame.time.Clock() #creates a clock that counts fps
-        maingame.fps.tick(20)
         maingame.backgroundImg = pygame.image.load('background_image.png')
         maingame.displayimage(maingame.backgroundImg, x, y)
         pygame.display.update()
@@ -601,9 +601,15 @@ class maingame: #class for main game functionality, OOP required for multiplayer
             #action for rule button, explains the rules of UNO
 
     def singleplayer():
+        start_time = 300
+        frame_count = 0
+        frame_rate = 60
+        clock = pygame.time.Clock()
         pygame.mixer.music.load("Menumusic_2.mp3")
         pygame.mixer.music.play(-1)
         maingame.empty_singleplayer_screen()
+        maingame.gametext_display('Total Game time: 5 minute', 2,9,30)
+        time.sleep(1)
         maingame.deal_deck(dealnumber)
         play = True
         while play == True:
@@ -657,6 +663,20 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                 '''elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
                     global Uno_called
                     UNO_called = True'''
+            total_seconds = start_time - (frame_count // frame_rate)
+            if total_seconds < 0:
+                print("time up")
+                total_seconds = 0
+                play = False
+                maingame.add_screen()
+                maingame.gametext_display("Times up! Game over!", 2,2,30)
+                pygame.display.update()
+                time.sleep(4)
+                pygame.quit()
+                quit()
+            frame_count += 1
+            clock.tick(frame_rate)
+            pygame.display.update()
             maingame.gametext_display('Player1', 12, 12, 15)
             maingame.gametext_display('Computer', 1.2, 12, 15)
             back_button = maingame.createbutton('BACK',300,500,200,40,white, orange,maingame.startup_menu) #back button to main menu
@@ -664,6 +684,8 @@ class maingame: #class for main game functionality, OOP required for multiplayer
             maingame.height = (y/3) #location on screen
             maingame.deck_image(maingame.width,maingame.height) #blank UNO CARD image to represent pile
             pygame.display.update()
+            
+
                 
 
 
@@ -775,11 +797,11 @@ class Multiplayeronline(maingame): #still currently working on
         n = Network(ip)
         p = n.getID()
         print(p)
-        self.firstplayerobject = p
+        Multiplayeronline.firstplayerobject = p
             
         while run:
             player2 = n.send(p)
-            Multiplayeronlinesecondplayerobject = player2
+            Multiplayeronline.secondplayerobject = player2
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
