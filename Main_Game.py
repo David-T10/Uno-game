@@ -427,9 +427,6 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         self.click = click
         self.button_font_size = button_font_size
         self.down = down
-        self.frame_count = 0
-        self.frame_rate = 60
-        self.start_time = 180
         #all variables defined in my main game that aren't already globalised
         #below are the methods used in my game
 
