@@ -125,27 +125,32 @@ class Player:
         #once a player has no cards in their hand, Player has won, displays win screen and plays winner music
 
       elif len(self.hand) == 1:
-          ms.showinfo("UNO Alert", "You have 10 seconds to call UNO!")
-          n = 10
-          while n > 0:
-              for event in pygame.event.get():
-                  if event.type == pygame.KEYDOWN and event.key == pygame.K_u:
-                      print("uno called")
-                      maingame.gametext_display("UNO!", 2, 10, 15)
-                      n=15
-              print(n)
-              n = n-1
-          if n == 0:
-              print("time's up")
-              ms.showerror("UNO Alert", "Time's up! Penalty: Draw a card")
-              time.sleep(2)
-              ms.destory()
-              Player1.draw(deck, 1)
-          elif n == 15:
-              ms.showinfo("UNO Alert", "UNO called")
-              ms.destory()
-
-
+        global t
+        global unoconfirmed
+        unoconfirmed = False
+        t = 10
+        unoroot = Tk()
+        Button(unoroot, text="Click to call uno", command=maingame.unocalled).pack()
+        unoroot.mainloop()
+        while t and unoconfirmed == False:
+            mins, secs = divmod(t, 60)
+            timer = '{:02d}:{:02d}'.format(mins, secs)
+            print(timer, end="\r")
+            time.sleep(1)
+            t -= 1
+        if t == 0 and unoconfirmed == False:
+            ms.showerror("","Time out! Penalty: draw a card")
+            Player1.draw(deck,1)
+            Player.showhand()
+            Computer.showhand()
+        elif t == 0 and unoconfirmed == True:
+            ms.showinfo("","UNO Called")
+            time.sleep(1)
+        #timer aspect not working but uno function is there
+            
+        
+          
+          
     def discard(self):
       global skipturn
       global reverseturn
@@ -516,7 +521,19 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         Player1.showhand()
         Computer.draw(deck, dealnumber)
         Computer.showhand()
-        maingame.gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)            
+        maingame.gametext_display('Player1 starts first, use the number keys to select a card',2,12,15)
+
+    def unocalled():
+        global unoconfirmed
+        global t
+        duration = 2000
+        top = Toplevel()
+        top.title('UNO alert')
+        Message(top, text="UNO called!", padx=20, pady=20).pack()
+        top.after(duration, top.destroy)
+        unoconfirmed = True
+        t=0
+        
                                    
     def display_last_discarded():
         global maingamepile
