@@ -16,7 +16,10 @@ from _thread import *
 pygame.mixer.pre_init(44100,16,2,4096) #initialises pygame mixer for music
 pygame.init() #initialises pygame
 
-
+Red = False
+Blue = False
+Green = False
+Yellow = False
 skipturn = False #variable used to check if a skip action card has been played
 reverseturn = False #variable used to check if a skip reverse card has been played
 p1reverseturn = False
@@ -33,6 +36,7 @@ y = 600 #screen resolution height
 div_iwidth = 750 #adjustment to width for dispalying images
 div_iheight = 550 #adjustment to height for dispalying images
 white = (255,255,255)
+yellow = (255,255,0)
 black = (0,0,0)
 green = (0,255,0)
 red = (255,0,0)
@@ -43,7 +47,7 @@ mouseposition = pygame.mouse.get_pos() #gets mouse position
 class Card: 
     def __init__(self, suit, number): #Card given the attribute Suit and Number
         self.suit = suit
-        vals = {10: "reverse", 11:"skip", 12:"+2"} #dictionary to store action card values paired with number keys
+        vals = {10: "reverse", 11:"skip", 12:"+2", 13:"4x", 14:"0"} #dictionary to store action card values paired with number keys
         if type(number) is int:
             if number < 10:
                 self.number = str(number)
@@ -74,7 +78,8 @@ class Deck:
         for s in ["yellow","red","blue","green"]:
             for n in range(0,13):
                 self.cards.append(Card(s, n))   #builds a deck by pairing each colour with numbers from 0 to 12, then converting them into a Card object and adding them to an array of card
-
+        for i in range (13,15):
+            self.cards.append(Card("wild", i))
     def showdeck(self):
         for card in self.cards:
             print(card)  #when showdeck is called, it will display all cards in the self.cards array
@@ -97,7 +102,6 @@ class Player:
             self.hand.append(deck.drawcard())
             #allows player draw multiple cards and appends them into hand array
 
-
     def showhand(self):
       print("{} Hand is: ".format(self.name))
       h=30
@@ -106,16 +110,6 @@ class Player:
           maingame.displayimage(card.image,div_iwidth,div_iheight-h) #display's each card in a player's hand on to the game screen
           pygame.display.update()
           h=h+25 #moves each following card down by 25 to ensure the user can see all the cards
-      #if len(self.hand) == 1:
-      #   global UNO_called
-      #   while UNO_called == False:
-      #      gamtext_display("Press U to call UNO", 2,4,15)
-       #     print("call uno thing")
-       #     #pygame.display.update()
-       #     if UNO_called == True:
-       #         gametext_display("UNO CALLED", 2,5, 15)
-       #         break
-       #  pygame.display.update()   UNO CALLED FUNCTION NOT WORKING, WILL FIX
         
       if len(self.hand) == 0:
         Playerwins = True
@@ -129,6 +123,27 @@ class Player:
         pygame.quit()
         os._exit(1)
         #once a player has no cards in their hand, Player has won, displays win screen and plays winner music
+
+      elif len(self.hand) == 1:
+          ms.showinfo("UNO Alert", "You have 10 seconds to call UNO!")
+          n = 10
+          while n > 0:
+              for event in pygame.event.get():
+                  if event.type == pygame.KEYDOWN and event.key == pygame.K_u:
+                      print("uno called")
+                      maingame.gametext_display("UNO!", 2, 10, 15)
+                      n=15
+              print(n)
+              n = n-1
+          if n == 0:
+              print("time's up")
+              ms.showerror("UNO Alert", "Time's up! Penalty: Draw a card")
+              time.sleep(2)
+              ms.destory()
+              Player1.draw(deck, 1)
+          elif n == 15:
+              ms.showinfo("UNO Alert", "UNO called")
+              ms.destory()
 
 
     def discard(self):
@@ -149,24 +164,59 @@ class Player:
                     self.hand.remove(card) #card is removed from player's hand
                     maingamepile.append(card) #card is added on to main game pile
                     break
-                elif card.number == "+2":
+                    if card.number == "+2":
                         maingame.gametext_display("Computer Draws 2 more cards", 2, 4,15)
                         pygame.display.update()
                         Computer.draw(deck, 2) #if card is a +2, computer gets 2 more cards
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
-                elif card.number == "skip":
+                    elif card.number == "skip":
                         skipturn = True
                         maingame.gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
                         pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
-                elif card.number == "reverse":
+                    elif card.number == "reverse":
                         reverseturn = True
                         maingame.gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
                         pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
+                elif card.suit == "wild":
+                    print("wild card played")
+                    maingame.gametext_display("Computer draws 4 cards", 2, 4, 15)
+                    pygame.display.update()
+                    Computer.draw(deck, 4)
+                    maingame.colourchangescreen()
+                    if Red == True:
+                        for card in self.hand:
+                            if card.suit == "red":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                            else:
+                                continue
+                    elif Green == True:
+                        for card in self.hand:
+                            if card.suit == "green":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                            else:
+                                continue
+                    elif Blue == True:
+                        for card in self.hand:
+                            if card.suit == "blue":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                            else:
+                                continue
+                    elif Yellow == True:
+                        for card in self.hand:
+                            if card.suit == "yellow":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                            else:
+                                continue
+                        
                 else:
                     invalidturn = True  
                     maingame.gametext_display("Invalid move. 1 card added to hand.",2,5,15)
@@ -323,27 +373,32 @@ class AI(Player):
             if ai_card.suit == lastcardplaced.suit or ai_card.number == lastcardplaced.number: #checks if card the computer wants to discard is the same suit or number as the card the player first discarded
                 print("computer discarded", ai_card)
                 self.aithrowAway(ai_card)
-            elif ai_card.number == "+2":
+                if ai_card.number == "+2":
                     maingame.gametext_display("Player1 Draws 2 more cards", 2, 5,15)
                     pygame.display.update()
                     Player1.draw(deck, 2)
                     self.aithrowAway(ai_card)
-            elif ai_card.number == "skip":
+                elif ai_card.number == "skip":
                     maingame.gametext_display("Player1's Turn Skipped", 2, 5,15)
                     Computerskip = True
                     pygame.display.update()
                     Computer.discard()
                     self.aithrowAway(ai_card)
-            elif ai_card.number == "reverse":
+                elif ai_card.number == "reverse":
                     maingame.gametext_display("Player1's Turn Reversed", 2,5,15)
                     Computerreverse = True
                     pygame.display.update()
                     Computer.discard()
                     self.aithrowAway(ai_card)
+            elif ai_card.suit == "wild":
+                maingame.gametext_display("Player1 Draws 4 more cards",2 ,5, 15)
+                pygame.display.update()
+                Player1.draw(deck, 4)
+                self.aithrowAway(ai_card)
             else:
                 maingame.gametext_display("Computer draws a card", 2, 7, 15)
                 Computer.draw(deck, 1)
-                #Computer.showhand()
+                Computer.showhand()
                 break
             break 
             #works similarly to the Player discard function. Check card suit, number and follows UNO rules accordingly 
@@ -353,6 +408,13 @@ class AI(Player):
             if card == discard:
               self.hand.remove(card)
               maingamepile.append(card) #removes card from hand and places in main game pile
+            elif card.suit == "wild" and card == discard:
+                s = ["yellow","blue","red","green"]
+                colourchosen = random.choice(s)
+                for card in self.hand:
+                    if card.suit == colourchosen:
+                        self.hand.remove(card)
+                        maingamepile.append(card)
 
 
     def showhand(self):
@@ -395,13 +457,13 @@ def callback():
     global dealnumber
     dealnumber = int(einput.get())
     
-    if dealnumber > 13:
+    if dealnumber > 15:
         ms.showerror("Error!", "Invalid Input")
     else:
         ms.showinfo("Success", "Please close the deal setting window")
         return dealnumber
         
-label= Label(window, text="Deal input box for Singleplayer Only. Please enter an amount (13 or less), click save and then close this window", fg='red', font=("Helvetica", 16))
+label= Label(window, text="Deal input box for Singleplayer Only. Please enter an amount (15 or less), click save and then close this window", fg='red', font=("Helvetica", 16))
 label.place(x=60, y=50)
 einput = Entry(window, text="Enter start DEAL amount", bd=20)
 einput.place(x=100, y=150)
@@ -430,6 +492,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         #all variables defined in my main game that aren't already globalised
         #below are the methods used in my game
 
+
     def displayimage(image_name,div_iwidth, div_iheight): #displaying imaages (UNO cards) on the screen
         maingame.iwidth = x-div_iwidth
         maingame.iheight = y-div_iheight
@@ -448,6 +511,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
 
     def deal_deck(dealnumber):
         deck.shuffle()
+        #deck.showdeck()
         Player1.draw(deck, dealnumber)
         Player1.showhand()
         Computer.draw(deck, dealnumber)
@@ -656,17 +720,13 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                 #checks what number in the list of cards the user has selected to remove, and removes that card from their hand
                 #pressing space draws a card for the user at any point in the game
                 #pressing s displays the last card in play for 4 seconds as a reminder
-                    
-                '''elif event.type == pygame.KEYDOWN and event.key == pygame.K_u:
-                    global Uno_called
-                    UNO_called = True'''
             total_seconds = start_time - (frame_count // frame_rate)
             if total_seconds < 0:
                 print("time up")
                 total_seconds = 0
                 play = False
                 maingame.add_screen()
-                maingame.gametext_display("Times up! Game over!", 2,2,30)
+                maingame.gametext_display("Times up! Game over! Game tied!", 2,2,30)
                 pygame.display.update()
                 time.sleep(4)
                 pygame.quit()
@@ -682,7 +742,30 @@ class maingame: #class for main game functionality, OOP required for multiplayer
             maingame.deck_image(maingame.width,maingame.height) #blank UNO CARD image to represent pile
             pygame.display.update()
             
+    def colourchangescreen():
+        redbutton = maingame.createbutton('RED',50,450,160,50,red,orange,)
+        bluebutton = maingame.createbutton('BLUE',250,450,160,50,blue,orange,multiplayergame.multiplayer_startup_screen)
+        greenbutton = maingame.createbutton('GREEN',450,450,100,50,green,orange,maingame.quitgame)
+        yellowbutton = maingame.createbutton('YELLOW', 600,450,100, 50, yellow, orange,maingame.help_screen)
+        pygame.display.update()
 
+    def redselected():
+        global Red
+        maingame.empty_singleplayer_screen()
+        red = True
+    def blueselected():
+        global Blue
+        maingame.empty_singleplayer_screen()
+        blue = True
+    def greenselected():
+        global Green
+        maingame.empty_singleplayer_screen()
+        green = True
+    def yellowselected():
+        global Yellow
+        maingame.empty_singleplayer_screen()
+        yellow = True
+        
                 
 
 
