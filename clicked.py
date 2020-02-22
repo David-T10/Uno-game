@@ -574,13 +574,16 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
                     maingame.deal_deck_selected()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
                     print("clicking")
                     for card in Player1.hand:
                         maingame.iwidth, maingame.iheight = event.pos
-                        if card.image.get_rect().collidepoint(maingame.iwidth, maingame.iheight):
+                        print(event.pos)
+                        if mouse_pos == event.pos:
                             print("card clicked")
                             print(Player1.hand.index(card))
                             maingame.down = Player1.hand.index(card)
+                            print(maingame.down)
                             maingame.discard_card_selected()
                             break
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:

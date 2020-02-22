@@ -103,6 +103,7 @@ class Player:
             #allows player draw multiple cards and appends them into hand array
 
     def showhand(self):
+      global Score
       print("{} Hand is: ".format(self.name))
       h=30
       for card in self.hand:
@@ -116,6 +117,8 @@ class Player:
         maingame.add_screen()
         maingame.gametext_display("Player1 won. Game Over", 2, 2, 40)
         maingame.gametext_display("Score: +100 ", 2,4,40)
+        Score = Score + 100
+        print("Youre final score is ",Score)
         pygame.mixer.music.load("winnermusic.mp3")
         pygame.mixer.music.play(-1)
         pygame.display.update()
@@ -160,6 +163,7 @@ class Player:
         
        
     def throwAway(self, discard):
+       global Score
        global maingamepile
        if len(maingamepile) > 1: #checks if there is a card or cards in play already
         lastcardplaced = maingamepile[-1] #if there is then the last card on the pile = the last card placed
@@ -175,20 +179,24 @@ class Player:
                         Computer.draw(deck, 2) #if card is a +2, computer gets 2 more cards
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
+                        Score = Score + 50
                     elif card.number == "skip":
                         skipturn = True
                         maingame.gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
                         pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
+                        Score = Score + 50
                     elif card.number == "reverse":
                         reverseturn = True
                         maingame.gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
                         pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
+                        Score = Score + 50
                 elif card.suit == "wild":
                     print("wild card played")
+                    Score = Score + 70
                     maingame.gametext_display("Computer draws 4 cards", 2, 4, 15)
                     pygame.display.update()
                     Computer.draw(deck, 4)
@@ -297,6 +305,30 @@ class Playerone(Player):
         os._exit(1)
         #once a player has no cards in their hand, Player has won, displays win screen and plays winner music
 
+      elif len(self.hand) == 1:
+        global t
+        global unoconfirmed
+        unoconfirmed = False
+        t = 10
+        unoroot = Tk()
+        Button(unoroot, text="Click to call uno", command=maingame.unocalled).pack()
+        unoroot.mainloop()
+        while t and unoconfirmed == False:
+            mins, secs = divmod(t, 60)
+            timer = '{:02d}:{:02d}'.format(mins, secs)
+            print(timer, end="\r")
+            time.sleep(1)
+            t -= 1
+        if t == 0 and unoconfirmed == False:
+            ms.showerror("","Time out! Penalty: draw a card")
+            mPlayer1.draw(deck,1)
+            mPlayer1.showhand()
+            mPlayer2.showhand()
+        elif t == 0 and unoconfirmed == True:
+            ms.showinfo("","UNO Called")
+            time.sleep(1)
+        #timer aspect not working but uno function is there
+
 class Player2(Player):
     def discard(self):
         if len(self.hand) != 0:
@@ -365,7 +397,31 @@ class Player2(Player):
             pygame.quit()
             os._exit(1) 
             #similar to Player showhand
-        
+
+        elif len(self.hand) == 1:
+            global t
+            global unoconfirmed
+            unoconfirmed = False
+            t = 10
+            unoroot = Tk()
+            Button(unoroot, text="Click to call uno", command=maingame.unocalled).pack()
+            unoroot.mainloop()
+            while t > 0 and unoconfirmed == False:
+                mins, secs = divmod(t, 60)
+                timer = '{:02d}:{:02d}'.format(mins, secs)
+                print(timer, end="\r")
+                time.sleep(1)
+                t -= 1
+            if t == 0 and unoconfirmed == False:
+                ms.showerror("","Time out! Penalty: draw a card")
+                mPlayer2.draw(deck,1)
+                mPlayer2.showhand()
+                mPlayer1.showhand()
+            elif t == 0 and unoconfirmed == True:
+                ms.showinfo("","UNO Called")
+                time.sleep(1)
+        #timer aspect not working but uno function is there
+
 
     
 class AI(Player):
@@ -1050,7 +1106,7 @@ class multiplayergame(maingame): #class for multiplayer including main game func
         #manages who''s turn it is between each player and what certain playing cards result in
 
 
-maingame.uno_gui()
+#maingame.uno_gui()
 
 
 
@@ -1064,7 +1120,7 @@ db.close()
 #creates a table with 4 columns, userid, username, password and score
 
 #login class for uno
-class Unologin:
+class Unodatbase:
     def __init__(self,master):
     	# Window 
         self.master = master
@@ -1096,7 +1152,7 @@ class Unologin:
             login = True
             maingame.uno_gui()
         else:
-            ms.showerror('Username Not Found.')
+            ms.showerror('Error!','Username Not Found.')
             
     def new_user(self):
     	#Establish Connection
@@ -1109,7 +1165,7 @@ class Unologin:
         if c.fetchall():
             ms.showerror('Error!','Username Taken Try a Diffrent One.')
         else:
-            ms.showinfo('Success!')
+            ms.showinfo('Success!','Account Created')
             self.log()
         #Create New Account 
         insert = 'INSERT INTO users(username,password) VALUES(?,?)'
@@ -1151,14 +1207,21 @@ class Unologin:
         Button(self.crf,text = 'Create Account',bd = 3 ,font = ('',15),padx=5,pady=5,command=self.new_user).grid()
         Button(self.crf,text = 'Go to Login',bd = 3 ,font = ('',15),padx=5,pady=5,command=self.log).grid(row=2,column=1)
 
+    '''def updatescore(self,score):
+        with sqlite3.connect('uno_user_database.db') as db:
+            c = db.cursor()
+            update_score = ('UPDATE users SET userscore =''' 
+
+    
+
 
     
 
 #create log in window and application object
-'''root = Tk()
-root.title("Login Form")
-Unologin(root)
-root.mainloop()'''
+root = Tk()
+root.title("Login")
+Unodatbase(root)
+root.mainloop()
 
 
 
