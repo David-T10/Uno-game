@@ -16,6 +16,7 @@ from _thread import *
 pygame.mixer.pre_init(44100,16,2,4096) #initialises pygame mixer for music
 pygame.init() #initialises pygame
 
+colouroption = False
 Red = False
 Blue = False
 Green = False
@@ -131,7 +132,7 @@ class Player:
         global t
         global unoconfirmed
         unoconfirmed = False
-        t = 10
+        t = 1
         unoroot = Tk()
         Button(unoroot, text="Click to call uno", command=maingame.unocalled).pack()
         unoroot.mainloop()
@@ -172,33 +173,41 @@ class Player:
                 if card.number == lastcardplaced.number or card.suit == lastcardplaced.suit: #checks if card selected to be discarded has the same suit or number as the last card in play on the pile
                     self.hand.remove(card) #card is removed from player's hand
                     maingamepile.append(card) #card is added on to main game pile
+                    maingame.gametext_display("Player1 played this card", 2,5, 15)
+                    maingame.display_last_discarded()
                     break
-                    if card.number == "+2":
+                elif card.number == "+2":
                         maingame.gametext_display("Computer Draws 2 more cards", 2, 4,15)
-                        pygame.display.update()
+                        #pygame.display.update()
                         Computer.draw(deck, 2) #if card is a +2, computer gets 2 more cards
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
                         Score = Score + 50
-                    elif card.number == "skip":
+                        maingame.gametext_display("Player1 played this card", 2,5, 15)
+                        maingame.display_last_discarded()
+                elif card.number == "skip":
                         skipturn = True
                         maingame.gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
-                        pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
+                        #pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
                         Score = Score + 50
-                    elif card.number == "reverse":
+                        maingame.gametext_display("Player1 played this card", 2,5, 15)
+                        maingame.display_last_discarded()
+                elif card.number == "reverse":
                         reverseturn = True
                         maingame.gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
-                        pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
+                        #pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
                         Score = Score + 50
+                        maingame.gametext_display("Player1 played this card", 2,5, 15)
+                        maingame.display_last_discarded()
                 elif card.suit == "wild":
                     print("wild card played")
                     Score = Score + 70
                     maingame.gametext_display("Computer draws 4 cards", 2, 4, 15)
-                    pygame.display.update()
+                    #pygame.display.update()
                     Computer.draw(deck, 4)
                     maingame.colourchangescreen()
                     if Red == True:
@@ -206,34 +215,46 @@ class Player:
                             if card.suit == "red":
                                 self.hand.remove(card)
                                 maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
                             else:
+                                print("no red card")
                                 continue
                     elif Green == True:
                         for card in self.hand:
                             if card.suit == "green":
                                 self.hand.remove(card)
                                 maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
                             else:
+                                print("no green card")
                                 continue
                     elif Blue == True:
                         for card in self.hand:
                             if card.suit == "blue":
                                 self.hand.remove(card)
                                 maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
                             else:
+                                print("no blue card")
                                 continue
                     elif Yellow == True:
                         for card in self.hand:
                             if card.suit == "yellow":
                                 self.hand.remove(card)
                                 maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
                             else:
+                                print("no yellow card")
                                 continue
                         
                 else:
                     invalidturn = True  
                     maingame.gametext_display("Invalid move. 1 card added to hand.",2,5,15)
-                    pygame.display.update()
+                    #pygame.display.update()
                     Player1.draw(deck, 1)
                     break  #if the user selects a card that isn't the same suit or number the card is invalidly played and they will face a draw card penalty
        else:
@@ -241,9 +262,11 @@ class Player:
            if card == discard:
             self.hand.remove(card)
             maingamepile.append(card) #if there are no cards in play on the main game pile then the card the user selects will be discarded as normal (as this means the user is starting the game first)
+            maingame.display_last_discarded()
             
 class Playerone(Player):
     def throwAway(self, discard):
+       global Score
        global maingamepile
        if len(maingamepile) > 1: #checks if there is a card or cards in play already
         lastcardplaced = maingamepile[-1] #if there is then the last card on the pile = the last card placed
@@ -271,6 +294,53 @@ class Playerone(Player):
                         pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
+                elif card.suit == "wild":
+                    print("wild card played")
+                    Score = Score + 70
+                    maingame.gametext_display("Player2 draws 4 cards", 2, 4, 15)
+                    #pygame.display.update()
+                    mPlayer2.draw(deck, 4)
+                    maingame.colourchangescreen()
+                    if Red == True:
+                        for card in self.hand:
+                            if card.suit == "red":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no red card")
+                                continue
+                    elif Green == True:
+                        for card in self.hand:
+                            if card.suit == "green":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no green card")
+                                continue
+                    elif Blue == True:
+                        for card in self.hand:
+                            if card.suit == "blue":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no blue card")
+                                continue
+                    elif Yellow == True:
+                        for card in self.hand:
+                            if card.suit == "yellow":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player1 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no yellow card")
+                                continue
                 else:
                     p1invalidturn = True  
                     maingame.gametext_display("Invalid move. 1 card added to hand.",2,5,15)
@@ -350,7 +420,7 @@ class Player2(Player):
                 elif card.number == "+2":
                         maingame.gametext_display("Player1 Draws 2 more cards", 2, 4,15)
                         pygame.display.update()
-                        mPlayer2.draw(deck, 2) #if card is a +2, computer gets 2 more cards
+                        mPlayer1.draw(deck, 2) #if card is a +2, computer gets 2 more cards
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
                 elif card.number == "skip":
@@ -365,6 +435,53 @@ class Player2(Player):
                         pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
+                elif card.suit == "wild":
+                    print("wild card played")
+                    Score = Score + 70
+                    maingame.gametext_display("Player1 draws 4 cards", 2, 4, 15)
+                    #pygame.display.update()
+                    mPlayer1.draw(deck, 4)
+                    maingame.colourchangescreen()
+                    if Red == True:
+                        for card in self.hand:
+                            if card.suit == "red":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player2 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no red card")
+                                continue
+                    elif Green == True:
+                        for card in self.hand:
+                            if card.suit == "green":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player2 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no green card")
+                                continue
+                    elif Blue == True:
+                        for card in self.hand:
+                            if card.suit == "blue":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player2 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no blue card")
+                                continue
+                    elif Yellow == True:
+                        for card in self.hand:
+                            if card.suit == "yellow":
+                                self.hand.remove(card)
+                                maingamepile.append(card)
+                                maingame.gametext_display("Player2 played this card", 2,5, 15)
+                                maingame.display_last_discarded()
+                            else:
+                                print("no yellow card")
+                                continue
                 else:
                     invalidturn = True  
                     maingame.gametext_display("Invalid move. 1 card added to hand.",2,5,15)
@@ -434,32 +551,37 @@ class AI(Player):
             if ai_card.suit == lastcardplaced.suit or ai_card.number == lastcardplaced.number: #checks if card the computer wants to discard is the same suit or number as the card the player first discarded
                 print("computer discarded", ai_card)
                 self.aithrowAway(ai_card)
-                if ai_card.number == "+2":
+            elif ai_card.number == "+2":
                     maingame.gametext_display("Player1 Draws 2 more cards", 2, 5,15)
+                    time.sleep(1.5)
                     pygame.display.update()
                     Player1.draw(deck, 2)
                     self.aithrowAway(ai_card)
-                elif ai_card.number == "skip":
+            elif ai_card.number == "skip":
                     maingame.gametext_display("Player1's Turn Skipped", 2, 5,15)
+                    time.sleep(1.5)
                     Computerskip = True
                     pygame.display.update()
                     Computer.discard()
                     self.aithrowAway(ai_card)
-                elif ai_card.number == "reverse":
+            elif ai_card.number == "reverse":
                     maingame.gametext_display("Player1's Turn Reversed", 2,5,15)
+                    time.sleep(1.5)
                     Computerreverse = True
                     pygame.display.update()
                     Computer.discard()
                     self.aithrowAway(ai_card)
             elif ai_card.suit == "wild":
                 maingame.gametext_display("Player1 Draws 4 more cards",2 ,5, 15)
+                time.sleep(1.5)
                 pygame.display.update()
                 Player1.draw(deck, 4)
                 self.aithrowAway(ai_card)
             else:
                 maingame.gametext_display("Computer draws a card", 2, 7, 15)
+                time.sleep(1.5)
                 Computer.draw(deck, 1)
-                Computer.showhand()
+                #Computer.showhand()
                 break
             break 
             #works similarly to the Player discard function. Check card suit, number and follows UNO rules accordingly 
@@ -470,12 +592,13 @@ class AI(Player):
               self.hand.remove(card)
               maingamepile.append(card) #removes card from hand and places in main game pile
             elif card.suit == "wild" and card == discard:
-                s = ["yellow","blue","red","green"]
-                colourchosen = random.choice(s)
-                for card in self.hand:
-                    if card.suit == colourchosen:
-                        self.hand.remove(card)
-                        maingamepile.append(card)
+                if card.number == '4x' or card.number == '0':
+                    s = ["yellow","blue","red","green"]
+                    colourchosen = random.choice(s)
+                    for card in self.hand:
+                        if card.suit == colourchosen:
+                            self.hand.remove(card)
+                            maingamepile.append(card)
 
 
     def showhand(self):
@@ -504,27 +627,23 @@ Player1 = Player('Player1')
 Computer = AI('Computer')
 #singleplayer stuff
 
-mdeck = Deck()
-mdeck.shuffle()
-mPlayer1 = Playerone("Player1")
-mPlayer2 = Player2("Player2")
-mPlayer1.draw(mdeck , 7)
-mPlayer2.draw(mdeck , 7)
-#initialises players for multiplayer game
 
 #GUI + EXTRA FUNCTION STUFF
 window= Tk()
 def callback():
     global dealnumber
-    dealnumber = int(einput.get())
-    
-    if dealnumber > 15:
-        ms.showerror("Error!", "Invalid Input")
-    else:
-        ms.showinfo("Success", "Please close the deal setting window")
-        return dealnumber
+    if "." not in(einput.get()):
+        dealnumber = int(einput.get())
         
-label= Label(window, text="Deal input box for Singleplayer Only. Please enter an amount (15 or less), click save and then close this window", fg='red', font=("Helvetica", 16))
+        if dealnumber > 15 or dealnumber == 0:
+            ms.showerror("Error!", "Invalid Input")
+        else:
+            ms.showinfo("Success", "Please close the deal setting window")
+            return dealnumber
+    else:
+        ms.showerror("Error!", "Invalid Input")
+cardsnumber = callback
+label= Label(window, text="Please enter an amount of cards (15 or less) that you wish to start with, click save and then close this window", fg='red', font=("Helvetica", 16))
 label.place(x=60, y=50)
 einput = Entry(window, text="Enter start DEAL amount", bd=20)
 einput.place(x=100, y=150)
@@ -534,6 +653,14 @@ window.title('Deal Setting')
 window.geometry("1200x250+10+10")
 window.mainloop()
 window.quit()
+
+mdeck = Deck()
+mdeck.shuffle()
+mPlayer1 = Playerone("Player1")
+mPlayer2 = Player2("Player2")
+mPlayer1.draw(mdeck , dealnumber)
+mPlayer2.draw(mdeck , dealnumber)
+#initialises players for multiplayer game
 
 class maingame: #class for main game functionality, OOP required for multiplayer purposes
     def __init__(self):
@@ -569,6 +696,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         TextSurf,TextRect = maingame.text_objects(text, maingame.gametext)
         TextRect.center = ((x/divby_x) ,(y/divby_y))
         uno_window.blit(TextSurf, TextRect)
+        pygame.display.update()
 
     def deal_deck(dealnumber):
         deck.shuffle()
@@ -702,47 +830,23 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-            back_button = maingame.createbutton('BACK',50,450,100,40,white, orange,maingame.startup_menu)
-            rulescreen_button = maingame.createbutton('RULES',500,450,100,40,white,orange,maingame.rulescreen)
-            maingame.gametext_display('KEYBINDS                             ACTIONS',2,12,25)
-            maingame.gametext_display('Tab                                       Deal Cards', 2,6,18)
-            maingame.gametext_display('x                     Discard Card x in Hand', 2,4,18)
-            maingame.gametext_display('Space                                    Draw a card',2,3,18)
-            maingame.gametext_display('s                           Show last played card',2,2.3,18)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_BACKSPACE:
+                    maingame.startup_menu()
+            maingame.rulescreenImg = pygame.image.load('rulescreen.png')
+            maingame.displayimage(maingame.rulescreenImg, x, y)
+            #back_button = maingame.createbutton('BACK',350,550,100,40,white, orange,maingame.startup_menu)
             pygame.display.update()
             #action for help button, displays back button to main menu and rule button to rule screen and keybinds
-
-    def rulescreen():
-        maingame.add_screen()
-        startup = True
-        while startup:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
-            back_button = maingame.createbutton('BACK',50,450,100,40,white, orange,maingame.help_screen)
-            maingame.gametext_display("Rules: The rules of uno are simple.", 3.5,12,20)
-            maingame.gametext_display("Your aim is to get rid of your cards before your opponent.", 2.3,9,20)
-            maingame.gametext_display("Start the game by pressing the TAB button",3.3,7,20)
-            maingame.gametext_display("Press the numbers keys to discard a card, e.g. 3 will discard your third card", 2,6,20)
-            maingame.gametext_display("If you can't match the colour or number of the card on the pile, press SPACE",2,5,20)
-            maingame.gametext_display("to draw another card",4.5,4.5,20)
-            maingame.gametext_display("if you play a wrong card, a draw will be drawn for you", 3,4,20)
-            maingame.gametext_display("Action Cards: Reverse- Reverses the turn order",2.5,3.5,20)
-            maingame.gametext_display("Skip - skips the opponents turn", 3.5,3,20)
-            maingame.gametext_display("+2- your opponent gets two extra cards", 2.5,2.5,20)
-            pygame.display.update()
-            #action for rule button, explains the rules of UNO
 
     def singleplayer():
         start_time = 300
         frame_count = 0
-        frame_rate = 60
+        frame_rate = 5
         clock = pygame.time.Clock()
-        pygame.mixer.music.load("Menumusic_2.mp3")
+        pygame.mixer.music.load("gamemusic1.mp3")
         pygame.mixer.music.play(-1)
         maingame.empty_singleplayer_screen()
-        maingame.gametext_display('Total Game time: 5 minute', 2,9,30)
+        maingame.gametext_display('Total Game time: 5 minute', 2,8,30)
         time.sleep(1)
         maingame.deal_deck(dealnumber)
         play = True
@@ -751,6 +855,85 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_BACKSPACE:
+                    maingame.startup_menu()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    print("player forfeited")
+                    Computerwins = True
+                    maingame.add_screen()
+                    maingame.gametext_display("Computer won. Game Over", 2, 2, 40)
+                    maingame.gametext_display("Score: +100 ", 2,4,40)
+                    pygame.display.update()
+                    time.sleep(5)
+                    pygame.quit()
+                    os._exit(1)
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    print(mouse_pos)
+                    print("clicking")
+                    if mouse_pos[0] > 49 and mouse_pos[0] < 130:
+                        if mouse_pos[1] >= 80 and mouse_pos[1] < 105:
+                            maingame.down = 0
+                            print(maingame.down)
+                            print("first card played")
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 108 and mouse_pos[1] < 128:
+                            maingame.down = 1
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                            print("second card played")
+                        elif mouse_pos[1] >= 134 and mouse_pos[1] < 153:
+                            maingame.down = 2
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 159 and mouse_pos[1] < 177:
+                            maingame.down = 3
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 182 and mouse_pos[1] < 203:
+                            maingame.down = 4
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 208 and mouse_pos[1] < 228:
+                            maingame.down = 5
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 232 and mouse_pos[1] < 251:
+                            maingame.down = 6
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 259 and mouse_pos[1] < 276:
+                            maingame.down = 7
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 285 and mouse_pos[1] < 303:
+                            maingame.down = 8
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 307 and mouse_pos[1] < 329:
+                            maingame.down = 9
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 332 and mouse_pos[1] < 352:
+                            maingame.down = 10
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 358 and mouse_pos[1] < 378:
+                            maingame.down = 11
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 383 and mouse_pos[1] < 403:
+                            maingame.down = 12
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 408 and mouse_pos[1] < 427:
+                            maingame.down = 13
+                            print(maingame.down)
+                            maingame.discard_card_selected()
+                        elif mouse_pos[1] >= 434 and mouse_pos[1] < 546:
+                            maingame.down = 14
+                            print(maingame.down)
+                            maingame.discard_card_selected()
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
                     maingame.down = 0
                     maingame.discard_card_selected()
@@ -785,13 +968,16 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                     maingame.display_last_discarded()
                     time.sleep(4)
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    Player1.draw(deck, 1)
-                    Player1.showhand()
-                    maingame.gametext_display("You've drawn a card from the pile",2,5,15)
-                    Computer.discard()
-                    Computer.showhand()
+                    if len(Player1.hand) <= 15:
+                        Player1.draw(deck, 1)
+                        Player1.showhand()
+                        maingame.gametext_display("You've drawn a card from the pile",2,5,15)
+                        Computer.discard()
+                        Computer.showhand()
+                    elif len(Player1.hand) > 15:
+                        ms.showerror("UNO Alert", "Max cards drawn please play a card or press Q to forfeit") 
                 #checks what number in the list of cards the user has selected to remove, and removes that card from their hand
-                #pressing space draws a card for the user at any point in the game
+                #pressing space draws a card for the user at any point in the game but only up to a maximum of 15 cards
                 #pressing s displays the last card in play for 4 seconds as a reminder
             total_seconds = start_time - (frame_count // frame_rate)
             if total_seconds < 0:
@@ -806,51 +992,71 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                 quit()
             frame_count += 1
             clock.tick(frame_rate)
-            pygame.display.update()
+            #pygame.display.update()
             maingame.gametext_display('Player1', 12, 12, 15)
             maingame.gametext_display('Computer', 1.2, 12, 15)
-            back_button = maingame.createbutton('BACK',300,500,200,40,white, orange,maingame.startup_menu) #back button to main menu
             maingame.width = (x/2.3) #location on screen
             maingame.height = (y/3) #location on screen
             maingame.deck_image(maingame.width,maingame.height) #blank UNO CARD image to represent pile
             pygame.display.update()
             
     def colourchangescreen():
-        redbutton = maingame.createbutton('RED',50,450,160,50,red,orange,)
-        bluebutton = maingame.createbutton('BLUE',250,450,160,50,blue,orange,multiplayergame.multiplayer_startup_screen)
-        greenbutton = maingame.createbutton('GREEN',450,450,100,50,green,orange,maingame.quitgame)
-        yellowbutton = maingame.createbutton('YELLOW', 600,450,100, 50, yellow, orange,maingame.help_screen)
-        pygame.display.update()
+        global colouroption
+        colouroption = False
+        while colouroption == False:
+            maingame.add_screen()
+            redbutton = maingame.createbutton('RED',50,450,160,50,red,orange,maingame.redselected)
+            bluebutton = maingame.createbutton('BLUE',250,450,160,50,blue,orange,maingame.blueselected)
+            greenbutton = maingame.createbutton('GREEN',450,450,100,50,green,orange,maingame.greenselected)
+            yellowbutton = maingame.createbutton('YELLOW', 600,450,100, 50, yellow, orange,maingame.yellowselected)
+            pygame.display.update()
+        
 
     def redselected():
+        global colouroption
         global Red
         maingame.empty_singleplayer_screen()
-        red = True
+        Red = True
+        colouroption = True
+        
     def blueselected():
+        global colouroption
         global Blue
         maingame.empty_singleplayer_screen()
-        blue = True
+        Blue = True
+        colouroption = True
+
     def greenselected():
+        global colouroption
         global Green
         maingame.empty_singleplayer_screen()
-        green = True
+        Green = True
+        colouroption = True
+
     def yellowselected():
+        global colouroption
         global Yellow
         maingame.empty_singleplayer_screen()
-        yellow = True
-        
+        Yellow = True
+        colouroption = True
                 
-
-
     def empty_singleplayer_screen():
-        maingame.add_screen()
+        global uno_window
+        uno_window = pygame.display.set_mode((x, y)) #creates a window with specified resolution (x,y)
+        uno_window.fill(white)
+        pygame.display.set_caption('Python UNO') #sets window title
+        maingame.fps = pygame.time.Clock() #creates a clock that counts fps
+        maingame.fps.tick(5)
+        maingame.gamescreenImg = pygame.image.load('gamescreen.png')
+        maingame.displayimage(maingame.gamescreenImg, x, y)
+        pygame.display.update()
         maingame.gametext_display('Player1', 12, 12, 15)
         maingame.gametext_display('Computer', 1.2, 12, 15)
         maingame.width = (x/2.3) #location on screen
         maingame.height = (y/3) #location on screen
         maingame.deck_image(maingame.width,maingame.height)
         #blank template for singleplayer screen, used after cards have been discarded to refresh view
-
+    
     def uno_gui():
         maingame.startup_menu()
 
@@ -942,7 +1148,7 @@ class Multiplayeronline(maingame): #still currently working on
 
     def main(): #ADD USER GAMEPLAY BETWEEN SERVERS AND THEN TEST EVERYTHING
         run = True
-        pygame.mixer.music.load("Menumusic_2.mp3")
+        pygame.mixer.music.load("gamemusic1.mp3")
         pygame.mixer.music.play(-1)
         host = socket.gethostname()
         ip = socket.gethostbyname(host)
@@ -986,11 +1192,18 @@ class multiplayergame(maingame): #class for multiplayer including main game func
                     pygame.quit()
                     quit()
             multiplayer_local_button = maingame.createbutton('Multiplayer Local', 150,450,160,50,blue,orange,multiplayergame.multiplayer_gui)
-            multiplayer_online_button = maingame.createbutton('Multiplayer Online', 450,450,160,50,red,orange,Multiplayeronline.MOgameplay())
+            multiplayer_online_button = maingame.createbutton('Multiplayer Online', 450,450,160,50,red,orange,Multiplayeronline.MOgameplay)
             pygame.display.update()
 
     def empty_multiplayer_screen():
-        maingame.add_screen()
+        global uno_window
+        uno_window = pygame.display.set_mode((x, y)) #creates a window with specified resolution (x,y)
+        uno_window.fill(white)
+        pygame.display.set_caption('Python UNO') #sets window title
+        maingame.fps = pygame.time.Clock() #creates a clock that counts fps
+        maingame.fps.tick(5)
+        maingame.gamescreenImg = pygame.image.load('gamescreen.png')
+        maingame.displayimage(maingame.gamescreenImg, x, y)
         maingame.gametext_display('Player1', 12, 12, 15)
         maingame.gametext_display('Player2', 1.2, 12, 15)
         maingame.width = (x/2.3)
@@ -1000,13 +1213,10 @@ class multiplayergame(maingame): #class for multiplayer including main game func
         mPlayer2.showhand()
             
     def multiplayer_gui():
-        print("connecting..")
-        time.sleep(3)
-        print("connected")
         global mdeck
         global mPlayer1
         global mPlayer2
-        pygame.mixer.music.load("Menumusic_2.mp3")
+        pygame.mixer.music.load("gamemusic1.mp3")
         pygame.mixer.music.play(-1)
         multiplayergame.empty_multiplayer_screen()
         maingame.gametext_display('Player1 starts first', 2, 12,15)
@@ -1019,6 +1229,135 @@ class multiplayergame(maingame): #class for multiplayer including main game func
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_BACKSPACE:
+                    maingame.startup_menu()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    print(mouse_pos)
+                    print("clicking")
+                    #print(cardpos)
+                    if mouse_pos[0] > 49 and mouse_pos[0] < 130:
+                        if mouse_pos[1] >= 80 and mouse_pos[1] < 105:
+                            maingame.down = 0
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 108 and mouse_pos[1] < 128:
+                            maingame.down = 1
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 134 and mouse_pos[1] < 153:
+                            maingame.down = 2
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 159 and mouse_pos[1] < 177:
+                            maingame.down = 3
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 182 and mouse_pos[1] < 203:
+                            maingame.down = 4
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 208 and mouse_pos[1] < 228:
+                            maingame.down = 5
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 232 and mouse_pos[1] < 251:
+                            maingame.down = 6
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 259 and mouse_pos[1] < 276:
+                            maingame.down = 7
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 285 and mouse_pos[1] < 303:
+                            maingame.down = 8
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 307 and mouse_pos[1] < 329:
+                            maingame.down = 9
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 332 and mouse_pos[1] < 352:
+                            maingame.down = 10
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 358 and mouse_pos[1] < 378:
+                            maingame.down = 11
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 383 and mouse_pos[1] < 403:
+                            maingame.down = 12
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 408 and mouse_pos[1] < 427:
+                            maingame.down = 13
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 434 and mouse_pos[1] < 546:
+                            maingame.down = 14
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                    elif mouse_pos[0] > 650 and mouse_pos[0] < 728:
+                        if mouse_pos[1] >= 80 and mouse_pos[1] < 105:
+                            maingame.down = 0
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 108 and mouse_pos[1] < 128:
+                            maingame.down = 1
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 134 and mouse_pos[1] < 153:
+                            maingame.down = 2
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 159 and mouse_pos[1] < 177:
+                            maingame.down = 3
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 182 and mouse_pos[1] < 203:
+                            maingame.down = 4
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 208 and mouse_pos[1] < 228:
+                            maingame.down = 5
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 232 and mouse_pos[1] < 251:
+                            maingame.down = 6
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 259 and mouse_pos[1] < 276:
+                            maingame.down = 7
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 285 and mouse_pos[1] < 303:
+                            maingame.down = 8
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 307 and mouse_pos[1] < 329:
+                            maingame.down = 9
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 332 and mouse_pos[1] < 352:
+                            maingame.down = 10
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 358 and mouse_pos[1] < 378:
+                            maingame.down = 11
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 383 and mouse_pos[1] < 403:
+                            maingame.down = 12
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 408 and mouse_pos[1] < 427:
+                            maingame.down = 13
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
+                        elif mouse_pos[1] >= 434 and mouse_pos[1] < 546:
+                            maingame.down = 14
+                            print(maingame.down)
+                            multiplayergame.gamemanager()
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
                     maingame.down = 0
                     multiplayergame.gamemanager()
@@ -1071,7 +1410,6 @@ class multiplayergame(maingame): #class for multiplayer including main game func
             maingame.width = (x/2.3) #location on screen
             maingame.height = (y/3) #location on screen
             maingame.deck_image(maingame.width,maingame.height) #blank UNO CARD image to represent pile
-            back_button = maingame.createbutton('BACK',300,500,200,40,white, orange,maingame.startup_menu) #back button to main menu
             pygame.display.update()
         #multiplayer local main screen and functionality
         
