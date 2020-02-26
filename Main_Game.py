@@ -120,6 +120,7 @@ class Player:
         maingame.gametext_display("Score: +100 ", 2,4,40)
         Score = Score + 100
         print("Youre final score is ",Score)
+        maingame.updatescore(Score, unodatabase.username)
         pygame.mixer.music.load("winnermusic.mp3")
         pygame.mixer.music.play(-1)
         pygame.display.update()
@@ -150,6 +151,7 @@ class Player:
         elif t == 0 and unoconfirmed == True:
             ms.showinfo("","UNO Called")
             time.sleep(1)
+            #continue
         #timer aspect not working but uno function is there
             
         
@@ -161,7 +163,7 @@ class Player:
       if len(self.hand) != 0:
         discard_card = self.hand[maingame.down]
         self.throwAway(discard_card) #if the player has cards left in their hand, it will discard the card based on their keyboard input using throwAway
-        
+        print(discard_card.suit)
        
     def throwAway(self, discard):
        global Score
@@ -173,40 +175,48 @@ class Player:
                 if card.number == lastcardplaced.number or card.suit == lastcardplaced.suit: #checks if card selected to be discarded has the same suit or number as the last card in play on the pile
                     self.hand.remove(card) #card is removed from player's hand
                     maingamepile.append(card) #card is added on to main game pile
-                    maingame.gametext_display("Player1 played this card", 2,5, 15)
+                    maingame.gametext_display("Player1 played this card", 2,5, 20)
+                    time.sleep(1)
                     maingame.display_last_discarded()
                     break
                 elif card.number == "+2":
-                        maingame.gametext_display("Computer Draws 2 more cards", 2, 4,15)
+                        maingame.gametext_display("Computer Draws 2 more cards", 2, 4,20)
+                        time.sleep(1)
                         #pygame.display.update()
                         Computer.draw(deck, 2) #if card is a +2, computer gets 2 more cards
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
                         Score = Score + 50
-                        maingame.gametext_display("Player1 played this card", 2,5, 15)
+                        maingame.gametext_display("Player1 played this card", 2,5, 20)
+                        time.sleep(1)
                         maingame.display_last_discarded()
                 elif card.number == "skip":
                         skipturn = True
-                        maingame.gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,15)
+                        maingame.gametext_display("Computer's Turn Will Be Skipped Next Round", 2, 4,20)
+                        time.sleep(1)
                         #pygame.display.update() #if card is a skip, computer's turn will be skipped next in the main game loop
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
                         Score = Score + 50
-                        maingame.gametext_display("Player1 played this card", 2,5, 15)
+                        maingame.gametext_display("Player1 played this card", 2,5, 20)
+                        time.sleep(1)
                         maingame.display_last_discarded()
                 elif card.number == "reverse":
                         reverseturn = True
-                        maingame.gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,15)
+                        maingame.gametext_display("Computer's Turn Will Be Reversed Next Round", 2,4,20)
+                        time.sleep(1)
                         #pygame.display.update() #if card is a reverse, computer's turn will be reversed next in the main game loop (effectively player gets another free turn)
                         self.hand.remove(card) #card is removed from player's hand
                         maingamepile.append(card) #card is added on to main game pile
                         Score = Score + 50
-                        maingame.gametext_display("Player1 played this card", 2,5, 15)
+                        maingame.gametext_display("Player1 played this card", 2,5, 20)
+                        time.sleep(1)
                         maingame.display_last_discarded()
                 elif card.suit == "wild":
                     print("wild card played")
                     Score = Score + 70
-                    maingame.gametext_display("Computer draws 4 cards", 2, 4, 15)
+                    maingame.gametext_display("Computer draws 4 cards", 2, 4, 20)
+                    time.sleep(1)
                     #pygame.display.update()
                     Computer.draw(deck, 4)
                     maingame.colourchangescreen()
@@ -367,6 +377,7 @@ class Playerone(Player):
         add_screen()
         maingame.gametext_display("Player1 won. Game Over", 2, 2, 40)
         maingame.gametext_display("Score: +100 ", 2,4,40)
+        maingame.updatescore(Score, unodatabase.username)
         pygame.mixer.music.load("winnermusic.mp3")
         pygame.mixer.music.play(-1)
         pygame.display.update()
@@ -509,6 +520,7 @@ class Player2(Player):
             maingame.add_screen()
             maingame.gametext_display("Player2 won. Game Over", 2, 2, 40)
             maingame.gametext_display("Score: +100 ", 2,4,40)
+            maingame.updatescore(Score, unodatabase.username)
             pygame.display.update()
             time.sleep(5)
             pygame.quit()
@@ -548,7 +560,7 @@ class AI(Player):
         print("lastplayed card is", lastcardplaced)
         for i in range (len(self.hand)):
             ai_card = self.hand[i]
-            if ai_card.suit == lastcardplaced.suit or ai_card.number == lastcardplaced.number: #checks if card the computer wants to discard is the same suit or number as the card the player first discarded
+            if ai_card.suit == lastcardplaced.suit or ai_card.number == lastcardplaced.number and (lastcardplaced.number != "+2" or lastcardplaced.number != "reverse" or lastcardplaced.number != "skip"): #checks if card the computer wants to discard is the same suit or number as the card the player first discarded
                 print("computer discarded", ai_card)
                 self.aithrowAway(ai_card)
             elif ai_card.number == "+2":
@@ -700,7 +712,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
 
     def deal_deck(dealnumber):
         deck.shuffle()
-        #deck.showdeck()
+        deck.showdeck()
         Player1.draw(deck, dealnumber)
         Player1.showhand()
         Computer.draw(deck, dealnumber)
@@ -846,7 +858,7 @@ class maingame: #class for main game functionality, OOP required for multiplayer
         pygame.mixer.music.load("gamemusic1.mp3")
         pygame.mixer.music.play(-1)
         maingame.empty_singleplayer_screen()
-        maingame.gametext_display('Total Game time: 5 minute', 2,8,30)
+        #maingame.gametext_display('Total Game time: 5 minute', 2,8,30)
         time.sleep(1)
         maingame.deal_deck(dealnumber)
         play = True
@@ -934,6 +946,16 @@ class maingame: #class for main game functionality, OOP required for multiplayer
                             maingame.down = 14
                             print(maingame.down)
                             maingame.discard_card_selected()
+                    elif mouse_pos[0] > 347 and mouse_pos[0] < 433 and mouse_pos[1] > 201 and mouse_pos[1] < 324:
+                        print("central deck clicked")
+                        if len(Player1.hand) <= 15:
+                            Player1.draw(deck, 1)
+                            Player1.showhand()
+                            maingame.gametext_display("You've drawn a card from the pile",2,5,15)
+                            Computer.discard()
+                            Computer.showhand()
+                        elif len(Player1.hand) > 15:
+                            ms.showerror("UNO Alert", "Max cards drawn please play a card or press Q to forfeit")
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_1:
                     maingame.down = 0
                     maingame.discard_card_selected()
@@ -999,11 +1021,26 @@ class maingame: #class for main game functionality, OOP required for multiplayer
             maingame.height = (y/3) #location on screen
             maingame.deck_image(maingame.width,maingame.height) #blank UNO CARD image to represent pile
             pygame.display.update()
+
+    def updatescore(self, score, username):
+        with sqlite3.connect('uno_user_database.db') as db:
+            c = db.cursor()
+            update_highscore = 'UPDATE users SET userscore = ? WHERE username = ? AND userscore < ?'
+            c.execute(update_highscore,[(score),(username),(score)])
             
     def colourchangescreen():
         global colouroption
         colouroption = False
         while colouroption == False:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                    maingame.redselected()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_b:
+                    maingame.blueselected()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_g:
+                    maingame.greenselected()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_y:
+                    maingame.greenselected()
             maingame.add_screen()
             redbutton = maingame.createbutton('RED',50,450,160,50,red,orange,maingame.redselected)
             bluebutton = maingame.createbutton('BLUE',250,450,160,50,blue,orange,maingame.blueselected)
@@ -1458,7 +1495,7 @@ db.close()
 #creates a table with 4 columns, userid, username, password and score
 
 #login class for uno
-class Unodatbase:
+class Unodatabase:
     def __init__(self,master):
     	# Window 
         self.master = master
@@ -1558,7 +1595,7 @@ class Unodatbase:
 #create log in window and application object
 root = Tk()
 root.title("Login")
-Unodatbase(root)
+Unodatabase(root)
 root.mainloop()
 
 
